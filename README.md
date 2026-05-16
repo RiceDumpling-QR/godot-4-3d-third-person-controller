@@ -47,7 +47,3 @@ The following `Input Map` actions are needed for the `Player.tscn` to work:
 - `jump`, `attack`, `aim`, `swap_weapons`: Action buttons for the character.
 
 The `Player.tscn` scene works as a standalone scene and doesn't need other cameras to work. You can change the player UI by changing the `Control` node inside `Player.tscn`.
-
-## License:
-
-All code is MIT-licensed, and assets are CC-By 4.0 [GDQuest](https://www.gdquest.com/).
