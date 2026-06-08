@@ -19,6 +19,15 @@
 [ext_resource type="PackedScene" uid="uid://bi31qtqv1sf2s" path="res://environment/flowers/flower_patch.tscn" id="15_jqya0"]
 [ext_resource type="PackedScene" uid="uid://cnj0t3ad178q6" path="res://demo_page/demo_page.tscn" id="16_qr75n"]
 [ext_resource type="AudioStream" uid="uid://bveh08m6w5ryf" path="res://level/music/mountain.mp3" id="17_mil5a"]
+[ext_resource type="Script" uid="uid://c4njlfc5hy0ow" path="res://stutter_fixes.gd" id="20_xuqvo"]
+[ext_resource type="PackedScene" uid="uid://bq562nfq7puh" path="res://player/grenade.tscn" id="21_qsp4k"]
+[ext_resource type="PackedScene" uid="uid://e7p4xvo51lbl" path="res://player/explosion_visuals/explosion_scene.tscn" id="22_kq58d"]
+[ext_resource type="Shader" uid="uid://1mm42h234gn6" path="res://player/explosion_visuals/shaders/shell_shader.gdshader" id="23_seu75"]
+[ext_resource type="Shader" uid="uid://dor4ptlwpxrfv" path="res://player/explosion_visuals/shaders/blast_shader.gdshader" id="24_htxhm"]
+[ext_resource type="PackedScene" uid="uid://c54mpt43fs4wc" path="res://player/coin/coin.tscn" id="25_jq2sk"]
+[ext_resource type="PackedScene" uid="uid://okmv1cbta83x" path="res://enemies/smoke_puff/smoke_puff.tscn" id="26_4k2k6"]
+[ext_resource type="Shader" uid="uid://bp40q8ga3f2f7" path="res://enemies/smoke_puff/smoke_ball.gdshader" id="27_0rl1p"]
+[ext_resource type="Shader" uid="uid://c2ku3tyf6vhdc" path="res://enemies/smoke_puff/smoke_ball_middle.gdshader" id="28_ok6jj"]
 
 [sub_resource type="Environment" id="Environment_allox"]
 background_mode = 2
@@ -63,6 +72,103 @@ subdivide_depth = 30
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_gym67"]
 size = Vector3(130, 6, 130)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4kwk8"]
+noise_type = 2
+seed = 2
+fractal_type = 0
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_q4shp"]
+noise = SubResource("FastNoiseLite_4kwk8")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_facbu"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("23_seu75")
+shader_parameter/intensity = 1.0
+shader_parameter/shell_color = Color(0.972549, 0.521569, 0, 1)
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_q4shp")
+shader_parameter/edge = 0.05
+shader_parameter/progress = 0.0
+
+[sub_resource type="Gradient" id="Gradient_m2wvp"]
+offsets = PackedFloat32Array(0.06, 0.97)
+colors = PackedColorArray(1, 0.376606, 0, 1, 0.96528, 1, 0.685068, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_odw0i"]
+gradient = SubResource("Gradient_m2wvp")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_i738b"]
+seed = 10
+frequency = 0.04
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yuelc"]
+noise = SubResource("FastNoiseLite_i738b")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wnnmc"]
+frequency = 0.04
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2ng3f"]
+noise = SubResource("FastNoiseLite_wnnmc")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b1qrp"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("24_htxhm")
+shader_parameter/noise_sampler = SubResource("NoiseTexture2D_2ng3f")
+shader_parameter/noise_2_sampler = SubResource("NoiseTexture2D_yuelc")
+shader_parameter/uv_y_offset = 0.0
+shader_parameter/uv_y_scale = 0.5
+shader_parameter/coverage = 0.4
+shader_parameter/intensity = 1.0
+shader_parameter/blast_gradient_sampler_1D = SubResource("GradientTexture1D_odw0i")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sxisx"]
+noise_type = 2
+fractal_type = 0
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_a2w6x"]
+noise = SubResource("FastNoiseLite_sxisx")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_come4"]
+resource_local_to_scene = true
+render_priority = 10
+shader = ExtResource("27_0rl1p")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_a2w6x")
+shader_parameter/progress = 1.0
+shader_parameter/smoothness = 0.2
+shader_parameter/ease = 3.0
+shader_parameter/base_scale = 0.1
+shader_parameter/deformation_scale = 1.0
+shader_parameter/texture_offset = 0.0
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_6jv1k"]
+noise_type = 2
+fractal_type = 0
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_s56rg"]
+noise = SubResource("FastNoiseLite_6jv1k")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h8e4i"]
+resource_local_to_scene = true
+render_priority = 10
+shader = ExtResource("28_ok6jj")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_s56rg")
+shader_parameter/progress = 0.0
+shader_parameter/smoothness = 0.01
+shader_parameter/ease = 2.0
+shader_parameter/base_scale = 0.0
+shader_parameter/deformation_scale = 1.0
+shader_parameter/texture_offset = 0.0
+shader_parameter/fresnel_offset = 0.1
+shader_parameter/global_alpha = 1.0
 
 [node name="Playground" type="Node3D" unique_id=1741816064]
 
@@ -1569,6 +1675,46 @@ skeleton = NodePath("../..")
 stream = ExtResource("17_mil5a")
 autoplay = true
 
+[node name="StutterFixes" type="Node" parent="." unique_id=397390947]
+process_mode = 4
+script = ExtResource("20_xuqvo")
+
+[node name="Grenade" parent="StutterFixes" unique_id=615295745 instance=ExtResource("21_qsp4k")]
+visible = false
+script = null
+
+[node name="grenade" parent="StutterFixes/Grenade" index="1" unique_id=1923784380]
+script = null
+
+[node name="Explosion" parent="StutterFixes" unique_id=1124962162 instance=ExtResource("22_kq58d")]
+visible = false
+
+[node name="Shell" parent="StutterFixes/Explosion" index="0" unique_id=674671704]
+material_override = SubResource("ShaderMaterial_facbu")
+
+[node name="Blast" parent="StutterFixes/Explosion" index="1" unique_id=601050963]
+material_override = SubResource("ShaderMaterial_b1qrp")
+
+[node name="Coin" parent="StutterFixes" unique_id=1505589733 instance=ExtResource("25_jq2sk")]
+visible = false
+script = null
+
+[node name="smoke_puff" parent="StutterFixes" unique_id=1464888597 instance=ExtResource("26_4k2k6")]
+visible = false
+script = null
+
+[node name="Cube" parent="StutterFixes/smoke_puff/smoke_ball" parent_id_path=PackedInt32Array(1464888597, 1652704592) index="0"]
+material_override = SubResource("ShaderMaterial_come4")
+
+[node name="Cube" parent="StutterFixes/smoke_puff/smoke_ball2" parent_id_path=PackedInt32Array(1464888597, 1778003220) index="0"]
+material_override = SubResource("ShaderMaterial_h8e4i")
+
 [connection signal="weapon_switched" from="Player" to="weapon_switch_ui" method="switch_to"]
 
 [editable path="NavigationRegion3D/terrain"]
+[editable path="StutterFixes/Grenade"]
+[editable path="StutterFixes/Explosion"]
+[editable path="StutterFixes/Coin"]
+[editable path="StutterFixes/smoke_puff"]
+[editable path="StutterFixes/smoke_puff/smoke_ball"]
+[editable path="StutterFixes/smoke_puff/smoke_ball2"]
