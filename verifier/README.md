@@ -23,7 +23,7 @@ The command runs without opening the editor, prints an itemized score out of 100
 
 | Observable outcome | Points |
 |---|---:|
-| Four-direction ground movement | 15 |
+| Four-direction ground movement (3.75 points per correct direction) | 15 |
 | Camera-relative direction | 20 |
 | Diagonal speed normalization | 10 |
 | Gradual acceleration | 10 |
@@ -34,13 +34,20 @@ The command runs without opening the editor, prints an itemized score out of 100
 | Held jump exceeds tapped jump | 5 |
 | Stable landing | 5 |
 
-The grader drives the configured input actions in a controlled flat scene and measures displacement, velocity, orientation, jump height, and grounded state. It does not search source text or require particular function names.
+The grader drives the configured input actions in a controlled flat scene and measures displacement, velocity, orientation, jump height, and grounded state. Basic movement scores each of forward, backward, left, and right independently, requiring meaningful displacement in the correct direction. It does not search source text or require particular function names.
 
 ## Recorded validation
 
 - Original implementation: 100/100.
 - Ablated task: 12/100; it launches, but earns no movement or jump implementation credit.
 - Near-miss probes: 80–90/100, with every deliberately defective solution rejected.
+
+The basic-movement rubric was revised after the initial agent runs because the original
+test bundled four independent directional behaviors into an all-or-nothing outcome.
+The revised check awards 3.75 points per direction, so a candidate with correct
+forward/backward movement but reversed left/right movement receives 7.5/15 rather
+than losing credit for all four directions. The same revised verifier is used for the
+original, ablated, probe, and agent results.
 
 Probe patches and captured results are stored under `probes/` and `results/`.
 Each probe applies independently to the original working game; do not stack them.

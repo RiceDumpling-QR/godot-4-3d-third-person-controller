@@ -7,13 +7,42 @@
         {
           "maximum": 15.0,
           "measurements": {
+            "direction_alignments": {
+              "move_down": 1.0,
+              "move_left": 1.0,
+              "move_right": 1.0,
+              "move_up": 1.0
+            },
+            "directions": {
+              "move_down": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "move_left": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "move_right": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "move_up": [
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
             "directions_passing": 4,
             "distances": {
               "move_down": 6.80215787887573,
               "move_left": 6.80215787887573,
               "move_right": 6.80215787887573,
               "move_up": 6.80215787887573
-            }
+            },
+            "minimum_distance": 4.5
           },
           "name": "basic_movement",
           "points": 15.0,
@@ -143,7 +172,7 @@
         }
       ],
       "godot_version": "4.6.3-stable (official)",
-      "label": "fast-diagonal",
+      "label": "probe-fast-diagonal",
       "maximum": 100.0,
       "score": 90.0
     },
@@ -152,13 +181,42 @@
         {
           "maximum": 15.0,
           "measurements": {
+            "direction_alignments": {
+              "move_down": 1.0,
+              "move_left": 1.0,
+              "move_right": 1.0,
+              "move_up": 1.0
+            },
+            "directions": {
+              "move_down": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "move_left": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "move_right": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "move_up": [
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
             "directions_passing": 4,
             "distances": {
               "move_down": 6.80215787887573,
               "move_left": 6.80215787887573,
               "move_right": 6.80215787887573,
               "move_up": 6.80215787887573
-            }
+            },
+            "minimum_distance": 4.5
           },
           "name": "basic_movement",
           "points": 15.0,
@@ -288,7 +346,7 @@
         }
       ],
       "godot_version": "4.6.3-stable (official)",
-      "label": "infinite-jump",
+      "label": "probe-infinite-jump",
       "maximum": 100.0,
       "score": 90.0
     },
@@ -297,13 +355,42 @@
         {
           "maximum": 15.0,
           "measurements": {
+            "direction_alignments": {
+              "move_down": 1.0,
+              "move_left": 1.0,
+              "move_right": 1.0,
+              "move_up": 1.0
+            },
+            "directions": {
+              "move_down": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "move_left": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "move_right": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "move_up": [
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
             "directions_passing": 4,
             "distances": {
               "move_down": 8.0000114440918,
               "move_left": 8.0000114440918,
               "move_right": 8.0000114440918,
               "move_up": 8.0000114440918
-            }
+            },
+            "minimum_distance": 4.5
           },
           "name": "basic_movement",
           "points": 15.0,
@@ -433,7 +520,7 @@
         }
       ],
       "godot_version": "4.6.3-stable (official)",
-      "label": "instant-velocity",
+      "label": "probe-instant-velocity",
       "maximum": 100.0,
       "score": 88.0
     },
@@ -442,13 +529,42 @@
         {
           "maximum": 15.0,
           "measurements": {
+            "direction_alignments": {
+              "move_down": 1.0,
+              "move_left": 1.0,
+              "move_right": 1.0,
+              "move_up": 1.0
+            },
+            "directions": {
+              "move_down": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "move_left": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "move_right": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "move_up": [
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
             "directions_passing": 4,
             "distances": {
               "move_down": 6.80215787887573,
               "move_left": 6.80215787887573,
               "move_right": 6.80215787887573,
               "move_up": 6.80215787887573
-            }
+            },
+            "minimum_distance": 4.5
           },
           "name": "basic_movement",
           "points": 15.0,
@@ -578,7 +694,7 @@
         }
       ],
       "godot_version": "4.6.3-stable (official)",
-      "label": "no-rotation",
+      "label": "probe-no-rotation",
       "maximum": 100.0,
       "score": 90.0
     },
@@ -587,13 +703,42 @@
         {
           "maximum": 15.0,
           "measurements": {
+            "direction_alignments": {
+              "move_down": 1.0,
+              "move_left": 1.0,
+              "move_right": 1.0,
+              "move_up": 1.0
+            },
+            "directions": {
+              "move_down": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "move_left": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "move_right": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "move_up": [
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
             "directions_passing": 4,
             "distances": {
               "move_down": 6.80215787887573,
               "move_left": 6.80215787887573,
               "move_right": 6.80215787887573,
               "move_up": 6.80215787887573
-            }
+            },
+            "minimum_distance": 4.5
           },
           "name": "basic_movement",
           "points": 15.0,
@@ -723,7 +868,7 @@
         }
       ],
       "godot_version": "4.6.3-stable (official)",
-      "label": "world-relative",
+      "label": "probe-world-relative",
       "maximum": 100.0,
       "score": 80.0
     }

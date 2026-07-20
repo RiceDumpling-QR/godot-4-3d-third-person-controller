@@ -3,13 +3,42 @@
     {
       "maximum": 15.0,
       "measurements": {
+        "direction_alignments": {
+          "move_down": 0.0,
+          "move_left": 0.0,
+          "move_right": 0.0,
+          "move_up": 0.0
+        },
+        "directions": {
+          "move_down": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "move_left": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "move_right": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "move_up": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
         "directions_passing": 0,
         "distances": {
           "move_down": 0.0,
           "move_left": 0.0,
           "move_right": 0.0,
           "move_up": 0.0
-        }
+        },
+        "minimum_distance": 4.5
       },
       "name": "basic_movement",
       "points": 0.0,
@@ -139,7 +168,7 @@
     }
   ],
   "godot_version": "4.6.3-stable (official)",
-  "label": "ablated",
+  "label": "control-ablated-final",
   "maximum": 100.0,
   "score": 12.0
 }

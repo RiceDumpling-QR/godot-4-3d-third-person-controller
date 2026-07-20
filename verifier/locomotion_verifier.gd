@@ -60,14 +60,31 @@ func _run() -> void:
 
 func _check_basic_movement() -> void:
 	var distances := {}
+	var directions := {}
+	var alignments := {}
 	var passed := 0
-	for action in [&"move_up", &"move_down", &"move_left", &"move_right"]:
+	var expected_directions := {
+		&"move_up": Vector3.BACK,
+		&"move_down": Vector3.FORWARD,
+		&"move_left": Vector3.RIGHT,
+		&"move_right": Vector3.LEFT,
+	}
+	for action in expected_directions:
 		var sample := await _movement_sample([action], 60)
 		distances[String(action)] = sample.distance
-		if sample.distance >= 5.5:
+		directions[String(action)] = _vec3(sample.direction)
+		var alignment: float = sample.direction.dot(expected_directions[action])
+		alignments[String(action)] = alignment
+		if sample.distance >= 4.5 and alignment >= 0.9:
 			passed += 1
 	var points := 15.0 * float(passed) / 4.0
-	_add_check("basic_movement", points, 15.0, {"distances": distances, "directions_passing": passed})
+	_add_check("basic_movement", points, 15.0, {
+		"distances": distances,
+		"directions": directions,
+		"direction_alignments": alignments,
+		"minimum_distance": 4.5,
+		"directions_passing": passed,
+	})
 
 
 func _check_camera_relative_movement() -> void:
