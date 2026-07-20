@@ -16,3 +16,15 @@ Restore the player's complete locomotion experience while keeping combat, camera
 - Movement remains collision-aware and stable against level geometry; the player should not pass through obstacles or remain trapped while trying to move along them.
 
 Do not remove or weaken unrelated gameplay systems to complete the task.
+
+## Evaluation isolation
+
+Complete the task using only this prompt and the files already present in the current checkout.
+
+- Do not inspect or recover an implementation from Git history, commits, tags, remotes, other branches, stashes, reflogs, or deleted objects.
+- Do not read parent or sibling directories, other local copies of this project, previous agent attempts, or external implementations of this demo.
+- Do not use the internet or external source-code search to find the removed locomotion implementation.
+- Do not search for or access hidden verifier code, test scenes, grading results, anti-cheat probes, or reference patches.
+- Do not switch branches, merge, rebase, reset to another revision, or otherwise replace this checkout with code from outside it.
+
+You may inspect and edit any project file inside this checkout and may run Godot, project-local tools, and your own diagnostic commands within it. Implement the behavior independently, then report the files you changed and the validation you performed.
