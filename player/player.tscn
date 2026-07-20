@@ -86,7 +86,6 @@ axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource("1_rvo1c")
 bullet_speed = 14.0
-acceleration = 6.0
 
 [node name="CharacterCollisionShape" type="CollisionShape3D" parent="." unique_id=2112685367]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
