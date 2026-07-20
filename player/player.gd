@@ -19,6 +19,21 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 ## Grenade cooldown
 @export var grenade_cooldown := 0.5
 
+## Top horizontal movement speed.
+@export var move_speed := 6.0
+## How quickly the character speeds up towards its target velocity.
+@export var acceleration := 20.0
+## How quickly the character slows down when there is no movement input.
+@export var deceleration := 25.0
+## How quickly the character turns to face its movement/aim direction, in radians per second.
+@export var turn_speed := 12.0
+## Upward velocity applied when jumping.
+@export var jump_initial_impulse := 10.0
+## Fraction of upward velocity kept when the jump input is released early, for shorter hops.
+@export_range(0.0, 1.0) var jump_cut_multiplier := 0.4
+## Distance the character has to travel on the ground before a footstep sound plays.
+@export var footstep_distance := 2.0
+
 @onready var _rotation_root: Node3D = $CharacterRotationRoot
 @onready var _camera_controller: CameraController = $CameraController
 @onready var _attack_animation_player: AnimationPlayer = $CharacterRotationRoot/MeleeAnchor/AnimationPlayer
@@ -27,6 +42,8 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 @onready var _character_skin: CharacterSkin = $CharacterRotationRoot/CharacterSkin
 @onready var _ui_aim_reticle: ColorRect = %AimReticle
 @onready var _ui_coins_container: HBoxContainer = %CoinsContainer
+@onready var _step_sound: AudioStreamPlayer3D = $StepSound
+@onready var _landing_sound: AudioStreamPlayer3D = $LandingSound
 
 @onready var _equipped_weapon: WEAPON_TYPE = WEAPON_TYPE.DEFAULT
 @onready var _last_strong_direction := Vector3.FORWARD
@@ -37,6 +54,10 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 
 @onready var _shoot_cooldown_tick := shoot_cooldown
 @onready var _grenade_cooldown_tick := grenade_cooldown
+
+var _was_on_floor := true
+var _jump_held := false
+var _footstep_distance_tick := 0.0
 
 
 func _ready() -> void:
@@ -85,6 +106,24 @@ func _physics_process(delta: float) -> void:
 		_grenade_aim_controller.from_look_position = global_position
 		_ui_aim_reticle.visible = false
 
+	# Movement input, relative to the camera's horizontal facing direction
+	var input_vector := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var camera_basis := Basis(Vector3.UP, _camera_controller.rotation.y)
+	var move_direction := camera_basis * Vector3(input_vector.x, 0.0, -input_vector.y)
+
+	var horizontal_velocity := Vector3(velocity.x, 0.0, velocity.z)
+	var target_velocity := move_direction * move_speed
+	var speed_change := acceleration if move_direction.length_squared() > 0.0 else deceleration
+	horizontal_velocity = horizontal_velocity.move_toward(target_velocity, speed_change * delta)
+	velocity.x = horizontal_velocity.x
+	velocity.z = horizontal_velocity.z
+
+	# Face the movement direction, or the aim direction while aiming, without snapping instantly
+	var facing_direction := _last_strong_direction if is_aiming else move_direction
+	if facing_direction.length_squared() > 0.001:
+		var target_facing_basis := Basis.looking_at(facing_direction, Vector3.UP, true)
+		_rotation_root.transform.basis = _rotation_root.transform.basis.slerp(target_facing_basis, clamp(turn_speed * delta, 0.0, 1.0))
+
 	# Update attack state and position
 
 	_shoot_cooldown_tick += delta
@@ -104,6 +143,20 @@ func _physics_process(delta: float) -> void:
 					_grenade_cooldown_tick = 0.0
 					_grenade_aim_controller.throw_grenade()
 
+	# Jumping: short taps yield small hops, held presses reach full height, and steering stays
+	# the same whether the character is grounded or airborne.
+	if is_on_floor():
+		if Input.is_action_just_pressed("jump"):
+			velocity.y = jump_initial_impulse
+			_jump_held = true
+			_character_skin.jump()
+	else:
+		if _jump_held and velocity.y > 0.0 and not Input.is_action_pressed("jump"):
+			velocity.y *= jump_cut_multiplier
+			_jump_held = false
+		if velocity.y <= 0.0:
+			_character_skin.fall()
+
 	velocity.y += _gravity * delta
 
 	var position_before := global_position
@@ -116,6 +169,27 @@ func _physics_process(delta: float) -> void:
 	var epsilon := 0.001
 	if delta_position.length() < epsilon and velocity.length() > epsilon:
 		global_position += get_wall_normal() * 0.1
+
+	# Landing and grounded animation/audio feedback
+	if is_on_floor():
+		if not _was_on_floor:
+			_character_skin.land()
+			_landing_sound.play()
+			_jump_held = false
+		else:
+			var ground_speed := Vector2(velocity.x, velocity.z).length()
+			if ground_speed > 0.1:
+				_character_skin.move(clamp(ground_speed / move_speed, 0.0, 1.0))
+				_footstep_distance_tick += ground_speed * delta
+				if _footstep_distance_tick >= footstep_distance:
+					_footstep_distance_tick = 0.0
+					_step_sound.pitch_scale = randfn(1.0, 0.05)
+					_step_sound.play()
+			else:
+				_character_skin.idle()
+				_footstep_distance_tick = 0.0
+
+	_was_on_floor = is_on_floor()
 
 
 func attack() -> void:
