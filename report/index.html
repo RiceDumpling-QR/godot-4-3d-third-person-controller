@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RoboBlast locomotion ablation task design, evidence, and verifier calibration.">
+  <title>RoboBlast — Locomotion Recovery Benchmark</title>
+  <style>
+    :root {
+      --ink: #182022;
+      --muted: #5f6c6d;
+      --paper: #f4f1e9;
+      --card: #fffdf8;
+      --line: #d7d1c4;
+      --lime: #c8f45d;
+      --teal: #0a6b64;
+      --coral: #ef765d;
+      --navy: #142d35;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(200, 244, 93, .34), transparent 24rem),
+        var(--paper);
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(24, 32, 34, .18);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 780;
+      letter-spacing: -.02em;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      color: white;
+      background: var(--navy);
+      box-shadow: inset 0 0 0 3px var(--lime);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    nav { display: flex; gap: 18px; font-size: 14px; color: var(--muted); }
+    nav a { text-decoration: none; }
+    nav a:hover { color: var(--ink); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 48px;
+      align-items: end;
+      padding: 76px 0 58px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 20px;
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 3px;
+      background: var(--coral);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 800px;
+      margin-bottom: 22px;
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: .94;
+      letter-spacing: -.065em;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin: 0;
+      color: #465355;
+      font-size: clamp(18px, 2vw, 22px);
+    }
+
+    .hero-note {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 253, 248, .68);
+      box-shadow: 0 20px 60px rgba(20, 45, 53, .08);
+    }
+
+    .hero-note strong { display: block; margin-bottom: 8px; font-size: 14px; }
+    .hero-note p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    section { padding: 70px 0; border-top: 1px solid rgba(24, 32, 34, .18); }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: .7fr 1.3fr;
+      gap: 40px;
+      margin-bottom: 34px;
+    }
+
+    h2 { margin-bottom: 0; font-size: clamp(34px, 4vw, 54px); line-height: 1; letter-spacing: -.045em; }
+    .section-intro { max-width: 720px; margin: 0; color: var(--muted); font-size: 17px; }
+
+    .branch-layout {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 18px;
+    }
+
+    .branch-card,
+    .verifier-card {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--card);
+    }
+
+    .branch-card h3,
+    .verifier-card h3 { margin-bottom: 18px; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+
+    .tree {
+      margin: 0;
+      overflow-x: auto;
+      color: #334042;
+      font: 13px/1.72 var(--mono);
+      white-space: pre;
+    }
+
+    .tree .root { color: var(--teal); font-weight: 800; }
+    .tree .hot { color: #b9442f; font-weight: 750; }
+    .tree .run { color: #496414; font-weight: 750; }
+
+    .branch-list { display: grid; gap: 12px; }
+
+    .branch-row {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 15px 0;
+      border-bottom: 1px solid #e8e3d9;
+    }
+
+    .branch-row:last-child { border-bottom: 0; }
+    .branch-row code { color: var(--teal); font: 700 12px/1.4 var(--mono); }
+    .branch-row p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    figure {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--card);
+    }
+
+    figure img { display: block; width: 100%; aspect-ratio: 600 / 354; object-fit: cover; background: #192427; }
+
+    figcaption { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 20px; }
+
+    .state {
+      align-self: start;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--lime);
+      font: 800 11px var(--mono);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .state.ablated { color: white; background: var(--coral); }
+    figcaption strong { display: block; margin-bottom: 3px; }
+    figcaption p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .rationale-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .reason {
+      min-height: 220px;
+      padding: 25px;
+      border-radius: 22px;
+      color: white;
+      background: var(--navy);
+    }
+
+    .reason:nth-child(2) { color: var(--ink); background: var(--lime); }
+    .reason:nth-child(3) { background: var(--teal); }
+
+    .reason .number { display: block; margin-bottom: 46px; font: 700 12px var(--mono); opacity: .7; }
+    .reason h3 { margin-bottom: 9px; font-size: 21px; letter-spacing: -.025em; }
+    .reason p { margin: 0; opacity: .82; font-size: 14px; }
+
+    .evidence {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .score-card {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 23px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--card);
+    }
+
+    .score {
+      min-width: 105px;
+      color: var(--teal);
+      font-size: 32px;
+      font-weight: 820;
+      letter-spacing: -.05em;
+    }
+
+    .score-card:nth-child(2) .score { color: var(--coral); }
+    .score-card strong { display: block; margin-bottom: 3px; }
+    .score-card p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 34px 0 48px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer a { color: var(--teal); font-weight: 700; text-decoration: none; }
+
+    @media (max-width: 850px) {
+      .hero, .section-head, .branch-layout { grid-template-columns: 1fr; }
+      .comparison, .rationale-grid, .evidence { grid-template-columns: 1fr; }
+      .hero { padding-top: 54px; }
+      nav { display: none; }
+    }
+
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 24px, 1180px); }
+      h1 { font-size: 48px; }
+      section { padding: 52px 0; }
+      .branch-card, .verifier-card { padding: 18px; }
+      .tree { font-size: 11px; }
+      .branch-row { grid-template-columns: 1fr; gap: 4px; }
+      figcaption { grid-template-columns: 1fr; }
+      .score-card { align-items: flex-start; flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark">RB</span> RoboBlast Ablation Study</div>
+      <nav aria-label="Report sections">
+        <a href="#design">Branch design</a>
+        <a href="#comparison">Before / after</a>
+        <a href="#rationale">Why locomotion</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <p class="eyebrow">Godot 4.6 · Third-person controller</p>
+          <h1>Remove the motion. Measure the recovery.</h1>
+          <p class="hero-copy">A controlled benchmark built from RoboBlast: preserve a polished game, remove its complete locomotion system, then measure whether coding agents can reconstruct the missing experience.</p>
+        </div>
+        <aside class="hero-note">
+          <strong>Report status · setup complete</strong>
+          <p>The ablation, behavioral prompt, headless verifier, and anti-cheat probes are ready. Three isolated Claude attempts will be added after evaluation.</p>
+        </aside>
+      </div>
+
+      <section id="design">
+        <div class="section-head">
+          <div><p class="eyebrow">01 · Experimental design</p><h2>One repo, isolated evidence.</h2></div>
+          <p class="section-intro">Branches separate the task seen by the agent from the hidden evaluation materials. Every run begins from the same ablated commit, while the verifier branch retains the working reference and behavioral tests.</p>
+        </div>
+
+        <div class="branch-layout">
+          <div class="branch-card">
+            <h3>Repository topology</h3>
+            <pre class="tree"><span class="root">RiceDumpling-QR/godot-4-3d-third-person-controller</span>
+├── main
+│   └── original RoboBlast game
+├── <span class="hot">task/locomotion</span>
+│   ├── locomotion removed
+│   └── TASK.md
+├── <span class="hot">verifier/locomotion</span>
+│   ├── original game
+│   ├── verifier + test scene
+│   ├── five near-miss probes
+│   ├── JSON evidence
+│   └── report
+├── <span class="run">run/claude-1</span>
+├── <span class="run">run/claude-2</span>
+└── <span class="run">run/claude-3</span></pre>
+          </div>
+
+          <div class="verifier-card">
+            <h3>What each branch owns</h3>
+            <div class="branch-list">
+              <div class="branch-row"><code>main</code><p>Unmodified source of truth.</p></div>
+              <div class="branch-row"><code>task/locomotion</code><p>Complete playable game with movement, jumping, rotation, and locomotion feedback removed; includes only the behavioral task prompt.</p></div>
+              <div class="branch-row"><code>verifier/locomotion</code><p>Hidden headless grader, controlled scene, original baseline, probe patches, captured results, and this report.</p></div>
+              <div class="branch-row"><code>run/claude-{1..3}</code><p>Three independent copies of the ablated game. Each records one agent attempt under identical conditions.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="comparison">
+        <div class="section-head">
+          <div><p class="eyebrow">02 · Behavioral delta</p><h2>The break is visible.</h2></div>
+          <p class="section-intro">The camera, combat, world, HUD, and character remain intact in both builds. The controlled difference is locomotion: the original traverses the level; the ablated build cannot translate or jump.</p>
+        </div>
+
+        <div class="comparison">
+          <figure>
+            <img src="assets/original-game.gif" alt="Original RoboBlast player moving and jumping through the level">
+            <figcaption><span class="state">Original</span><div><strong>Movement creates agency</strong><p>Camera-relative traversal and jumping let the player navigate the authored 3D space.</p></div></figcaption>
+          </figure>
+          <figure>
+            <img src="assets/ablated-game.gif" alt="Ablated RoboBlast player remaining stationary while the camera rotates">
+            <figcaption><span class="state ablated">Ablated</span><div><strong>The world remains; locomotion does not</strong><p>Camera and combat controls still respond, but WASD and jump no longer move the character.</p></div></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="rationale">
+        <div class="section-head">
+          <div><p class="eyebrow">03 · Feature selection</p><h2>Why ablate locomotion?</h2></div>
+          <p class="section-intro">Locomotion is central enough to matter, broad enough to expose engineering judgment, and concrete enough to grade from behavior rather than code shape.</p>
+        </div>
+
+        <div class="rationale-grid">
+          <article class="reason"><span class="number">01 / Player critical</span><h3>Immediate experiential impact</h3><p>Removing locomotion makes a polished game unmistakably incomplete without destroying its surrounding systems. A successful repair is obvious to a player.</p></article>
+          <article class="reason"><span class="number">02 / Integrative</span><h3>More than WASD</h3><p>A complete fix coordinates camera-relative input, acceleration, collision, grounded jumping, variable jump height, facing, animation, footsteps, and landing feedback.</p></article>
+          <article class="reason"><span class="number">03 / Observable</span><h3>Implementation-agnostic grading</h3><p>The verifier measures displacement, velocity, direction, orientation, jump trajectory, and landing state. Agents can choose their own code structure.</p></article>
+        </div>
+
+        <div class="evidence" aria-label="Verifier calibration evidence">
+          <div class="score-card"><div class="score">100/100</div><div><strong>Original baseline</strong><p>The locked working game passes every behavioral check.</p></div></div>
+          <div class="score-card"><div class="score">12/100</div><div><strong>Ablated baseline</strong><p>The game still launches, but earns no movement or jump implementation credit.</p></div></div>
+          <div class="score-card"><div class="score">5 / 5</div><div><strong>Near-miss probes caught</strong><p>World-relative input, fast diagonals, instant velocity, infinite jump, and missing rotation all lose points.</p></div></div>
+          <div class="score-card"><div class="score">10 checks</div><div><strong>Partial credit surface</strong><p>Independent checks distinguish basic recovery from a complete, polished reconstruction.</p></div></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>RoboBlast locomotion recovery benchmark · report in progress</span>
+      <a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller">View repository ↗</a>
+    </footer>
+  </div>
+</body>
+</html>
