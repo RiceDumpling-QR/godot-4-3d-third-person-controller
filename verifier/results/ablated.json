@@ -1,0 +1,145 @@
+{
+  "checks": [
+    {
+      "maximum": 15.0,
+      "measurements": {
+        "directions_passing": 0,
+        "distances": {
+          "move_down": 0.0,
+          "move_left": 0.0,
+          "move_right": 0.0,
+          "move_up": 0.0
+        }
+      },
+      "name": "basic_movement",
+      "points": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "maximum": 20.0,
+      "measurements": {
+        "base_direction": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "direction_change_degrees": 180.0,
+        "turned_direction": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "name": "camera_relative_movement",
+      "points": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "maximum": 10.0,
+      "measurements": {
+        "diagonal_distance": 0.0,
+        "ratio": 0.0,
+        "straight_distance": 0.0
+      },
+      "name": "diagonal_normalization",
+      "points": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "maximum": 10.0,
+      "measurements": {
+        "speed_samples": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "name": "acceleration",
+      "points": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "maximum": 10.0,
+      "measurements": {
+        "final_speed": 0.0,
+        "first_speed": 0.0
+      },
+      "name": "stopping",
+      "points": 5.0,
+      "status": "PARTIAL"
+    },
+    {
+      "maximum": 10.0,
+      "measurements": {
+        "angular_error_degrees": 180.0,
+        "facing": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "movement_direction": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "name": "travel_orientation",
+      "points": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "maximum": 10.0,
+      "measurements": {
+        "final_height": 0.000260409549809992,
+        "landed": false,
+        "left_floor": false,
+        "max_height": 0.000260409549809992,
+        "max_rise": 0.0,
+        "start_height": 0.000260409549809992
+      },
+      "name": "grounded_jump",
+      "points": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "maximum": 5.0,
+      "measurements": {
+        "velocity_after": 0.0,
+        "velocity_before": 0.0
+      },
+      "name": "midair_jump_rejection",
+      "points": 5.0,
+      "status": "PASS"
+    },
+    {
+      "maximum": 5.0,
+      "measurements": {
+        "difference": 0.0,
+        "held_rise": 0.0,
+        "tapped_rise": 0.0
+      },
+      "name": "variable_jump_height",
+      "points": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "maximum": 5.0,
+      "measurements": {
+        "final_height": 0.000260409549809992,
+        "landed": false,
+        "left_floor": false,
+        "max_height": 0.000260409549809992,
+        "max_rise": 0.0,
+        "start_height": 0.000260409549809992
+      },
+      "name": "stable_landing",
+      "points": 2.0,
+      "status": "PARTIAL"
+    }
+  ],
+  "godot_version": "4.6.3-stable (official)",
+  "label": "ablated",
+  "maximum": 100.0,
+  "score": 12.0
+}

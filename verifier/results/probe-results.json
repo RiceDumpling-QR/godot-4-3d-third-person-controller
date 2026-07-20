@@ -1,0 +1,731 @@
+{
+  "all_caught": true,
+  "probe_count": 5,
+  "probes": [
+    {
+      "checks": [
+        {
+          "maximum": 15.0,
+          "measurements": {
+            "directions_passing": 4,
+            "distances": {
+              "move_down": 6.80215787887573,
+              "move_left": 6.80215787887573,
+              "move_right": 6.80215787887573,
+              "move_up": 6.80215787887573
+            }
+          },
+          "name": "basic_movement",
+          "points": 15.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 20.0,
+          "measurements": {
+            "base_direction": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "direction_change_degrees": 90.0000025044779,
+            "turned_direction": [
+              1.0,
+              0.0,
+              -4.37113847340243E-8
+            ]
+          },
+          "name": "camera_relative_movement",
+          "points": 20.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "diagonal_distance": 9.61970520019531,
+            "ratio": 1.41421374973809,
+            "straight_distance": 6.80215787887573
+          },
+          "name": "diagonal_normalization",
+          "points": 0.0,
+          "status": "FAIL"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "speed_samples": [
+              0.800000011920929,
+              3.27608013153076,
+              6.35287094116211,
+              7.93017625808716
+            ]
+          },
+          "name": "acceleration",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_speed": 0.0,
+            "first_speed": 7.18706178665161
+          },
+          "name": "stopping",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "angular_error_degrees": 0.0,
+            "facing": [
+              -1.0,
+              0.0,
+              -0.0000694990158081055
+            ],
+            "movement_direction": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "name": "travel_orientation",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_height": 0.000904127955436707,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.3009045124054,
+            "max_rise": 2.30064410285559,
+            "start_height": 0.000260409549809992
+          },
+          "name": "grounded_jump",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "velocity_after": -1.0,
+            "velocity_before": -0.5
+          },
+          "name": "midair_jump_rejection",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "difference": 0.38916540145874,
+            "held_rise": 2.68980950431433,
+            "tapped_rise": 2.30064410285559
+          },
+          "name": "variable_jump_height",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "final_height": 0.000648044049739838,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.64715361595154,
+            "max_rise": 2.64689320640173,
+            "start_height": 0.000260409549809992
+          },
+          "name": "stable_landing",
+          "points": 5.0,
+          "status": "PASS"
+        }
+      ],
+      "godot_version": "4.6.3-stable (official)",
+      "label": "fast-diagonal",
+      "maximum": 100.0,
+      "score": 90.0
+    },
+    {
+      "checks": [
+        {
+          "maximum": 15.0,
+          "measurements": {
+            "directions_passing": 4,
+            "distances": {
+              "move_down": 6.80215787887573,
+              "move_left": 6.80215787887573,
+              "move_right": 6.80215787887573,
+              "move_up": 6.80215787887573
+            }
+          },
+          "name": "basic_movement",
+          "points": 15.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 20.0,
+          "measurements": {
+            "base_direction": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "direction_change_degrees": 90.0000025044779,
+            "turned_direction": [
+              1.0,
+              0.0,
+              -4.37113847340243E-8
+            ]
+          },
+          "name": "camera_relative_movement",
+          "points": 20.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "diagonal_distance": 5.89084148406982,
+            "ratio": 0.866025397964369,
+            "straight_distance": 6.80215787887573
+          },
+          "name": "diagonal_normalization",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "speed_samples": [
+              0.800000011920929,
+              3.27608013153076,
+              6.35287094116211,
+              7.93017625808716
+            ]
+          },
+          "name": "acceleration",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_speed": 0.0,
+            "first_speed": 7.18706178665161
+          },
+          "name": "stopping",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "angular_error_degrees": 0.0,
+            "facing": [
+              -1.0,
+              0.0,
+              -0.0000694990158081055
+            ],
+            "movement_direction": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "name": "travel_orientation",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_height": 0.000904127955436707,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.3009045124054,
+            "max_rise": 2.30064410285559,
+            "start_height": 0.000260409549809992
+          },
+          "name": "grounded_jump",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "velocity_after": 11.0,
+            "velocity_before": -0.5
+          },
+          "name": "midair_jump_rejection",
+          "points": 0.0,
+          "status": "FAIL"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "difference": 1225.82507205009,
+            "held_rise": 1228.12571615295,
+            "tapped_rise": 2.30064410285559
+          },
+          "name": "variable_jump_height",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "final_height": 719.250854492188,
+            "landed": false,
+            "left_floor": true,
+            "max_height": 719.250854492188,
+            "max_rise": 719.250594082638,
+            "start_height": 0.000260409549809992
+          },
+          "name": "stable_landing",
+          "points": 0.0,
+          "status": "FAIL"
+        }
+      ],
+      "godot_version": "4.6.3-stable (official)",
+      "label": "infinite-jump",
+      "maximum": 100.0,
+      "score": 90.0
+    },
+    {
+      "checks": [
+        {
+          "maximum": 15.0,
+          "measurements": {
+            "directions_passing": 4,
+            "distances": {
+              "move_down": 8.0000114440918,
+              "move_left": 8.0000114440918,
+              "move_right": 8.0000114440918,
+              "move_up": 8.0000114440918
+            }
+          },
+          "name": "basic_movement",
+          "points": 15.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 20.0,
+          "measurements": {
+            "base_direction": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "direction_change_degrees": 90.000002504474,
+            "turned_direction": [
+              1.0,
+              0.0,
+              -4.37113172324644E-8
+            ]
+          },
+          "name": "camera_relative_movement",
+          "points": 20.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "diagonal_distance": 6.92820167541504,
+            "ratio": 0.866023970569653,
+            "straight_distance": 8.0000114440918
+          },
+          "name": "diagonal_normalization",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "speed_samples": [
+              8.0,
+              8.0,
+              8.0,
+              8.0
+            ]
+          },
+          "name": "acceleration",
+          "points": 3.0,
+          "status": "PARTIAL"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_speed": 0.0,
+            "first_speed": 0.0
+          },
+          "name": "stopping",
+          "points": 5.0,
+          "status": "PARTIAL"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "angular_error_degrees": 0.0,
+            "facing": [
+              -1.0,
+              0.0,
+              -0.0000694990158081055
+            ],
+            "movement_direction": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "name": "travel_orientation",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_height": 0.000904127955436707,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.3009045124054,
+            "max_rise": 2.30064410285559,
+            "start_height": 0.000260409549809992
+          },
+          "name": "grounded_jump",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "velocity_after": -1.0,
+            "velocity_before": -0.5
+          },
+          "name": "midair_jump_rejection",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "difference": 0.38916540145874,
+            "held_rise": 2.68980950431433,
+            "tapped_rise": 2.30064410285559
+          },
+          "name": "variable_jump_height",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "final_height": 0.000648044049739838,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.64715361595154,
+            "max_rise": 2.64689320640173,
+            "start_height": 0.000260409549809992
+          },
+          "name": "stable_landing",
+          "points": 5.0,
+          "status": "PASS"
+        }
+      ],
+      "godot_version": "4.6.3-stable (official)",
+      "label": "instant-velocity",
+      "maximum": 100.0,
+      "score": 88.0
+    },
+    {
+      "checks": [
+        {
+          "maximum": 15.0,
+          "measurements": {
+            "directions_passing": 4,
+            "distances": {
+              "move_down": 6.80215787887573,
+              "move_left": 6.80215787887573,
+              "move_right": 6.80215787887573,
+              "move_up": 6.80215787887573
+            }
+          },
+          "name": "basic_movement",
+          "points": 15.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 20.0,
+          "measurements": {
+            "base_direction": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "direction_change_degrees": 90.0000025044779,
+            "turned_direction": [
+              1.0,
+              0.0,
+              -4.37113847340243E-8
+            ]
+          },
+          "name": "camera_relative_movement",
+          "points": 20.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "diagonal_distance": 5.89084148406982,
+            "ratio": 0.866025397964369,
+            "straight_distance": 6.80215787887573
+          },
+          "name": "diagonal_normalization",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "speed_samples": [
+              0.800000011920929,
+              3.27608013153076,
+              6.35287094116211,
+              7.93017625808716
+            ]
+          },
+          "name": "acceleration",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_speed": 0.0,
+            "first_speed": 7.18706178665161
+          },
+          "name": "stopping",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "angular_error_degrees": 90.0,
+            "facing": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "movement_direction": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "name": "travel_orientation",
+          "points": 0.0,
+          "status": "FAIL"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_height": 0.000904127955436707,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.3009045124054,
+            "max_rise": 2.30064410285559,
+            "start_height": 0.000260409549809992
+          },
+          "name": "grounded_jump",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "velocity_after": -1.0,
+            "velocity_before": -0.5
+          },
+          "name": "midair_jump_rejection",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "difference": 0.38916540145874,
+            "held_rise": 2.68980950431433,
+            "tapped_rise": 2.30064410285559
+          },
+          "name": "variable_jump_height",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "final_height": 0.000648044049739838,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.64715361595154,
+            "max_rise": 2.64689320640173,
+            "start_height": 0.000260409549809992
+          },
+          "name": "stable_landing",
+          "points": 5.0,
+          "status": "PASS"
+        }
+      ],
+      "godot_version": "4.6.3-stable (official)",
+      "label": "no-rotation",
+      "maximum": 100.0,
+      "score": 90.0
+    },
+    {
+      "checks": [
+        {
+          "maximum": 15.0,
+          "measurements": {
+            "directions_passing": 4,
+            "distances": {
+              "move_down": 6.80215787887573,
+              "move_left": 6.80215787887573,
+              "move_right": 6.80215787887573,
+              "move_up": 6.80215787887573
+            }
+          },
+          "name": "basic_movement",
+          "points": 15.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 20.0,
+          "measurements": {
+            "base_direction": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "direction_change_degrees": 0.0,
+            "turned_direction": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "name": "camera_relative_movement",
+          "points": 0.0,
+          "status": "FAIL"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "diagonal_distance": 5.89084148406982,
+            "ratio": 0.866025397964369,
+            "straight_distance": 6.80215787887573
+          },
+          "name": "diagonal_normalization",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "speed_samples": [
+              0.800000011920929,
+              3.27608013153076,
+              6.35287094116211,
+              7.93017625808716
+            ]
+          },
+          "name": "acceleration",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_speed": 0.0,
+            "first_speed": 7.18706178665161
+          },
+          "name": "stopping",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "angular_error_degrees": 0.0,
+            "facing": [
+              -1.0,
+              0.0,
+              -0.0000694990158081055
+            ],
+            "movement_direction": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "name": "travel_orientation",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 10.0,
+          "measurements": {
+            "final_height": 0.000904127955436707,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.3009045124054,
+            "max_rise": 2.30064410285559,
+            "start_height": 0.000260409549809992
+          },
+          "name": "grounded_jump",
+          "points": 10.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "velocity_after": -1.0,
+            "velocity_before": -0.5
+          },
+          "name": "midair_jump_rejection",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "difference": 0.38916540145874,
+            "held_rise": 2.68980950431433,
+            "tapped_rise": 2.30064410285559
+          },
+          "name": "variable_jump_height",
+          "points": 5.0,
+          "status": "PASS"
+        },
+        {
+          "maximum": 5.0,
+          "measurements": {
+            "final_height": 0.000648044049739838,
+            "landed": true,
+            "left_floor": true,
+            "max_height": 2.64715361595154,
+            "max_rise": 2.64689320640173,
+            "start_height": 0.000260409549809992
+          },
+          "name": "stable_landing",
+          "points": 5.0,
+          "status": "PASS"
+        }
+      ],
+      "godot_version": "4.6.3-stable (official)",
+      "label": "world-relative",
+      "maximum": 100.0,
+      "score": 80.0
+    }
+  ]
+}

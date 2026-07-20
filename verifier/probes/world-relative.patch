@@ -1,0 +1,11 @@
+diff --git a/player/player.gd b/player/player.gd
+--- a/player/player.gd
++++ b/player/player.gd
+@@ -230,6 +230,5 @@ func _get_camera_oriented_input() -> Vector3:
+ 	input.x = -raw_input.x * sqrt(1.0 - raw_input.y * raw_input.y / 2.0)
+ 	input.z = -raw_input.y * sqrt(1.0 - raw_input.x * raw_input.x / 2.0)
+ 
+-	input = _camera_controller.global_transform.basis * input
+-	input.y = 0.0
++	# Near miss: movement remains locked to world axes instead of following the camera.
+ 	return input

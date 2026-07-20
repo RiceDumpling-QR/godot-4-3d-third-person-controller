@@ -1,0 +1,12 @@
+diff --git a/player/player.gd b/player/player.gd
+--- a/player/player.gd
++++ b/player/player.gd
+@@ -105,7 +105,7 @@ func _physics_process(delta: float) -> void:
+ 	if is_aiming:
+ 		_last_strong_direction = (_camera_controller.global_transform.basis * Vector3.BACK).normalized()
+ 
+-	_orient_character_to_direction(_last_strong_direction, delta)
++	# Near miss: movement works, but the visible character never turns to travel.
+ 
+ 	# We separate out the y velocity to not interpolate on the gravity
+ 	var y_velocity := velocity.y
