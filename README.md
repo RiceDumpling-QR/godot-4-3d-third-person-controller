@@ -9,16 +9,11 @@ description: "A 3D Third Person Shooter Controller Demo"
 
 | Deliverable | Location |
 |---|---|
-| Locked original game | `main` branch |
 | Ablated task and behavioral prompt | `task/locomotion` branch; see `TASK.md` |
 | Headless verifier and exact usage instructions | `verifier/locomotion` branch; see `verifier/README.md` and `verifier/run_verifier.sh` |
-| Anti-cheat near-miss solutions | `verifier/locomotion` branch; see `verifier/probes/` |
-| Evidence that all probes were caught | `verifier/locomotion` branch; see `verifier/results/probe-results.json` |
-| Three Claude Code attempts | `run/claude-1`, `run/claude-2`, and `run/claude-3` branches |
-| Agent scores | `verifier/locomotion` branch; see `verifier/results/claude-1.json`, `claude-2.json`, and `claude-3.json` |
-| Agent diffs | Compare each `run/claude-*` branch against `task/locomotion` |
-| Agent/model/version and tool details | Add these to `report/index.html` before submission; the current run branches contain the attempted code, but not this metadata |
-| Browser-ready visual writeup | `verifier/locomotion` branch; open `report/index.html` directly—no build step is required |
+| Anti-cheat probes and evidence | `verifier/locomotion` branch; see `verifier/probes/` and `verifier/results/probe-results.json` |
+| Agent runs | `run/claude-1`, `run/claude-2`, and `run/claude-3`; scores are in `verifier/locomotion:verifier/results/`, and each diff is against `task/locomotion` |
+| Browser-ready HTML writeup with visuals | `verifier/locomotion` branch; open `report/index.html` directly—no build step is required |
 
 Run the headless verifier from the root of the `verifier/locomotion` branch:
 
