@@ -18,20 +18,14 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 @export var shoot_cooldown := 0.5
 ## Grenade cooldown
 @export var grenade_cooldown := 0.5
-## Maximum horizontal locomotion speed.
-@export var move_speed := 8.0
-## How quickly the player reaches full speed while movement is held.
-@export var acceleration := 24.0
-## How quickly the player comes to rest when movement is released.
-@export var deceleration := 30.0
-## Initial upward speed of a jump. Also used by jumping pads.
-@export var jump_initial_impulse := 10.5
-## Reduced gravity applied while jump is held during ascent.
-@export var jump_hold_gravity_scale := 0.55
-## How quickly the visible character turns toward travel.
-@export var turn_speed := 12.0
-## Horizontal distance between footstep sounds at a full run.
-@export var footstep_distance := 2.3
+## Maximum horizontal locomotion speed in world units per second.
+@export var movement_speed := 8.0
+@export var acceleration := 28.0
+@export var deceleration := 36.0
+@export var air_acceleration := 10.0
+@export var jump_velocity := 11.0
+@export_range(0.0, 1.0) var held_jump_gravity_scale := 0.55
+@export var rotation_speed := 12.0
 
 @onready var _rotation_root: Node3D = $CharacterRotationRoot
 @onready var _camera_controller: CameraController = $CameraController
@@ -55,7 +49,9 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 @onready var _grenade_cooldown_tick := grenade_cooldown
 
 var _was_grounded := false
-var _footstep_progress := 0.0
+var _has_physics_step := false
+var _distance_since_step := 0.0
+var _landing_animation_time := 0.0
 
 
 func _ready() -> void:
@@ -68,11 +64,7 @@ func _ready() -> void:
 	# In that case, we register input actions for the user at runtime.
 	if not InputMap.has_action("move_left"):
 		_register_input_actions()
-	floor_snap_length = 0.35
-	floor_stop_on_slope = true
-	# Assume a grounded spawn until the first physics step proves otherwise. This
-	# prevents the initial floor contact from being reported as a landing.
-	_was_grounded = true
+	_was_grounded = is_on_floor()
 
 func _physics_process(delta: float) -> void:
 	# Calculate ground height for camera controller
@@ -128,84 +120,94 @@ func _physics_process(delta: float) -> void:
 					_grenade_cooldown_tick = 0.0
 					_grenade_aim_controller.throw_grenade()
 
-	var grounded_before_move := is_on_floor()
-	var melee_motion_locked := _attack_animation_player.is_playing()
-	_update_horizontal_movement(delta, melee_motion_locked)
-	_update_jump_and_gravity(delta, grounded_before_move, melee_motion_locked)
+	var attack_motion_locked := _attack_animation_player.is_playing()
+	_update_horizontal_movement(delta, attack_motion_locked)
+	_update_jump_and_gravity(delta)
 
 	var position_before := global_position
 	move_and_slide()
-	var position_after := global_position
-	_update_feedback_and_animation(position_after - position_before)
+	_update_locomotion_feedback(delta, position_before)
 
 
-func _update_horizontal_movement(delta: float, movement_locked: bool) -> void:
-	if movement_locked:
+func _update_horizontal_movement(delta: float, attack_motion_locked: bool) -> void:
+	if attack_motion_locked:
 		return
 
 	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	# Ignore camera pitch: movement always lies on the world's horizontal plane.
 	var camera_forward := -_camera_controller.camera.global_basis.z
 	camera_forward.y = 0.0
 	camera_forward = camera_forward.normalized()
 	var camera_right := _camera_controller.camera.global_basis.x
 	camera_right.y = 0.0
 	camera_right = camera_right.normalized()
-	var move_direction := (camera_right * input.x + camera_forward * -input.y)
-	if move_direction.length_squared() > 1.0:
-		move_direction = move_direction.normalized()
+	var direction := (camera_right * input.x + camera_forward * -input.y).normalized()
+	var target := direction * movement_speed * minf(input.length(), 1.0)
+	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+	var rate := acceleration if not direction.is_zero_approx() else deceleration
+	if not is_on_floor():
+		rate = air_acceleration
+	horizontal = horizontal.move_toward(target, rate * delta)
+	velocity.x = horizontal.x
+	velocity.z = horizontal.z
 
-	var target_velocity := move_direction * move_speed
-	var horizontal_velocity := Vector3(velocity.x, 0.0, velocity.z)
-	var rate := acceleration if not move_direction.is_zero_approx() else deceleration
-	horizontal_velocity = horizontal_velocity.move_toward(target_velocity, rate * delta)
-	velocity.x = horizontal_velocity.x
-	velocity.z = horizontal_velocity.z
-
-	if not move_direction.is_zero_approx():
-		_last_strong_direction = move_direction
-		var target_angle := atan2(move_direction.x, move_direction.z)
-		_rotation_root.rotation.y = lerp_angle(_rotation_root.rotation.y, target_angle, 1.0 - exp(-turn_speed * delta))
+	if not direction.is_zero_approx():
+		_last_strong_direction = direction
+		var target_yaw := atan2(direction.x, direction.z)
+		_rotation_root.rotation.y = lerp_angle(
+			_rotation_root.rotation.y, target_yaw, minf(rotation_speed * delta, 1.0)
+		)
 
 
-func _update_jump_and_gravity(delta: float, grounded: bool, movement_locked: bool) -> void:
-	if grounded:
-		if velocity.y < 0.0:
+func _update_jump_and_gravity(delta: float) -> void:
+	if is_on_floor():
+		if Input.is_action_just_pressed("jump"):
+			velocity.y = jump_velocity
+		else:
+			# Avoid accumulating a downward velocity while grounded.
 			velocity.y = 0.0
-		if not movement_locked and Input.is_action_just_pressed("jump"):
-			velocity.y = jump_initial_impulse
-			_character_skin.set_locomotion_state(&"jump")
-			return
+		return
 
-	var gravity_scale := jump_hold_gravity_scale if velocity.y > 0.0 and Input.is_action_pressed("jump") else 1.0
+	var gravity_scale := held_jump_gravity_scale if Input.is_action_pressed("jump") and velocity.y > 0.0 else 1.0
 	velocity.y += _gravity * gravity_scale * delta
+	# Releasing early trims the ascent, giving taps a distinctly lower arc.
+	if Input.is_action_just_released("jump") and velocity.y > 0.0:
+		velocity.y *= 0.55
 
 
-func _update_feedback_and_animation(delta_position: Vector3) -> void:
+func _update_locomotion_feedback(delta: float, position_before: Vector3) -> void:
 	var grounded := is_on_floor()
-	var just_landed := grounded and not _was_grounded
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
-
-	if just_landed:
+	var landed := _has_physics_step and grounded and not _was_grounded and velocity.y <= 0.0
+	if landed:
 		_landing_sound.play()
-		_character_skin.set_locomotion_state(&"ground_impact")
-		_footstep_progress = 0.0
+		_landing_animation_time = 0.16
+		_distance_since_step = 0.0
+
+	_landing_animation_time = maxf(_landing_animation_time - delta, 0.0)
+	if _landing_animation_time > 0.0:
+		_character_skin.set_locomotion_state(&"ground_impact", horizontal_speed / movement_speed)
 	elif not grounded:
 		_character_skin.set_locomotion_state(&"jump" if velocity.y > 0.0 else &"fall")
 	elif horizontal_speed > 0.15:
-		_character_skin.set_locomotion_state(&"move", horizontal_speed / move_speed)
+		_character_skin.set_locomotion_state(&"move", horizontal_speed / movement_speed)
 	else:
 		_character_skin.set_locomotion_state(&"idle")
 
-	if grounded and horizontal_speed > 0.5 and not _attack_animation_player.is_playing():
-		_footstep_progress += Vector2(delta_position.x, delta_position.z).length()
-		var stride := lerpf(1.6, footstep_distance, clampf(horizontal_speed / move_speed, 0.0, 1.0))
-		if _footstep_progress >= stride:
-			_footstep_progress = fmod(_footstep_progress, stride)
+	if grounded and horizontal_speed > 0.75:
+		var horizontal_delta := global_position - position_before
+		horizontal_delta.y = 0.0
+		_distance_since_step += horizontal_delta.length()
+		# Step spacing follows actual distance travelled, so collisions do not create phantom steps.
+		var step_distance := lerpf(1.35, 2.25, clampf(horizontal_speed / movement_speed, 0.0, 1.0))
+		if _distance_since_step >= step_distance:
+			_distance_since_step = fmod(_distance_since_step, step_distance)
 			_step_sound.play()
 	else:
-		_footstep_progress = 0.0
+		_distance_since_step = 0.0
 
 	_was_grounded = grounded
+	_has_physics_step = true
 
 
 func attack() -> void:
