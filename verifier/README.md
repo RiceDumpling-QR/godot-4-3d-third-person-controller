@@ -42,13 +42,6 @@ The grader drives the configured input actions in a controlled flat scene and me
 - Ablated task: 12/100; it launches, but earns no movement or jump implementation credit.
 - Near-miss probes: 80–90/100, with every deliberately defective solution rejected.
 
-The basic-movement rubric was revised after the initial agent runs because the original
-test bundled four independent directional behaviors into an all-or-nothing outcome.
-The revised check awards 3.75 points per direction, so a candidate with correct
-forward/backward movement but reversed left/right movement receives 7.5/15 rather
-than losing credit for all four directions. The same revised verifier is used for the
-original, ablated, probe, and agent results.
-
 Probe patches and captured results are stored under `probes/` and `results/`.
 Each probe applies independently to the original working game; do not stack them.
 For example:
