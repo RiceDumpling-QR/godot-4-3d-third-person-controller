@@ -7,6 +7,7 @@ const BULLET_SCENE := preload("bullet.tscn")
 const COIN_SCENE := preload("coin/coin.tscn")
 
 enum WEAPON_TYPE { DEFAULT, GRENADE }
+enum MOTION_STATE { IDLE, MOVE, JUMP, FALL, LAND }
 
 ## Speed of shot bullets.
 @export var bullet_speed := 10.0
@@ -19,6 +20,25 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 ## Grenade cooldown
 @export var grenade_cooldown := 0.5
 
+## Top ground movement speed.
+@export var move_speed := 8.0
+## How quickly the character accelerates towards its target movement speed.
+@export var acceleration := 10.0
+## How quickly the character slows down once movement input is released.
+@export var deceleration := 14.0
+## How quickly the character turns to face its movement direction.
+@export var rotation_speed := 12.0
+## Upward velocity applied the instant a jump starts.
+@export var jump_initial_impulse := 10.0
+## Extra upward acceleration applied while the jump button is held.
+@export var jump_hold_acceleration := 30.0
+## Longest a held jump button can keep adding extra height.
+@export var jump_max_hold_time := 0.2
+## Time between footsteps while walking.
+@export var footstep_interval_walk := 0.5
+## Time between footsteps while running at full speed.
+@export var footstep_interval_run := 0.3
+
 @onready var _rotation_root: Node3D = $CharacterRotationRoot
 @onready var _camera_controller: CameraController = $CameraController
 @onready var _attack_animation_player: AnimationPlayer = $CharacterRotationRoot/MeleeAnchor/AnimationPlayer
@@ -27,6 +47,8 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 @onready var _character_skin: CharacterSkin = $CharacterRotationRoot/CharacterSkin
 @onready var _ui_aim_reticle: ColorRect = %AimReticle
 @onready var _ui_coins_container: HBoxContainer = %CoinsContainer
+@onready var _step_sound: AudioStreamPlayer3D = $StepSound
+@onready var _landing_sound: AudioStreamPlayer3D = $LandingSound
 
 @onready var _equipped_weapon: WEAPON_TYPE = WEAPON_TYPE.DEFAULT
 @onready var _last_strong_direction := Vector3.FORWARD
@@ -37,6 +59,11 @@ enum WEAPON_TYPE { DEFAULT, GRENADE }
 
 @onready var _shoot_cooldown_tick := shoot_cooldown
 @onready var _grenade_cooldown_tick := grenade_cooldown
+
+@onready var _motion_state := MOTION_STATE.IDLE
+@onready var _is_jumping := false
+@onready var _jump_hold_tick := 0.0
+@onready var _footstep_tick := 0.0
 
 
 func _ready() -> void:
@@ -51,6 +78,8 @@ func _ready() -> void:
 		_register_input_actions()
 
 func _physics_process(delta: float) -> void:
+	var was_on_floor := is_on_floor()
+
 	# Calculate ground height for camera controller
 	if _ground_shapecast.get_collision_count() > 0:
 		for collision_result in _ground_shapecast.collision_result:
@@ -59,6 +88,42 @@ func _physics_process(delta: float) -> void:
 		_ground_height = global_position.y + _ground_shapecast.target_position.y
 	if global_position.y < _ground_height:
 		_ground_height = global_position.y
+
+	# Movement relative to the camera's point of view
+	var input_vector := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var camera_basis := _camera_controller.global_transform.basis
+	var forward_direction := camera_basis * Vector3.BACK
+	forward_direction.y = 0.0
+	forward_direction = forward_direction.normalized()
+	var right_direction := camera_basis * Vector3.RIGHT
+	right_direction.y = 0.0
+	right_direction = right_direction.normalized()
+	var move_direction := right_direction * input_vector.x - forward_direction * input_vector.y
+	if move_direction.length() > 1.0:
+		move_direction = move_direction.normalized()
+
+	var horizontal_velocity := Vector3(velocity.x, 0.0, velocity.z)
+	var move_rate := acceleration if move_direction.length_squared() > 0.0 else deceleration
+	horizontal_velocity = horizontal_velocity.move_toward(move_direction * move_speed, move_rate * delta)
+	velocity.x = horizontal_velocity.x
+	velocity.z = horizontal_velocity.z
+
+	if move_direction.length_squared() > 0.0:
+		var target_rotation := Basis.looking_at(-move_direction, Vector3.UP).get_rotation_quaternion()
+		_rotation_root.quaternion = _rotation_root.quaternion.slerp(target_rotation, clamp(rotation_speed * delta, 0.0, 1.0))
+
+	# Jumping: a short tap and a held press reach different heights
+	if was_on_floor:
+		_jump_hold_tick = 0.0
+		if Input.is_action_just_pressed("jump"):
+			velocity.y = jump_initial_impulse
+			_is_jumping = true
+	if _is_jumping:
+		if Input.is_action_pressed("jump") and _jump_hold_tick < jump_max_hold_time:
+			velocity.y += jump_hold_acceleration * delta
+			_jump_hold_tick += delta
+		else:
+			_is_jumping = false
 
 	# Swap weapons
 	if Input.is_action_just_pressed("swap_weapons"):
@@ -116,6 +181,45 @@ func _physics_process(delta: float) -> void:
 	var epsilon := 0.001
 	if delta_position.length() < epsilon and velocity.length() > epsilon:
 		global_position += get_wall_normal() * 0.1
+
+	# Drive movement animation, footsteps, and landing feedback
+	var is_grounded := is_on_floor()
+	var speed_ratio: float = clamp(Vector2(velocity.x, velocity.z).length() / move_speed, 0.0, 1.0)
+	var new_motion_state := _motion_state
+	if is_grounded:
+		if not was_on_floor:
+			new_motion_state = MOTION_STATE.LAND
+			_landing_sound.play()
+		elif speed_ratio > 0.05:
+			new_motion_state = MOTION_STATE.MOVE
+		else:
+			new_motion_state = MOTION_STATE.IDLE
+	elif velocity.y > 0.0:
+		new_motion_state = MOTION_STATE.JUMP
+	else:
+		new_motion_state = MOTION_STATE.FALL
+
+	if new_motion_state != _motion_state or new_motion_state == MOTION_STATE.MOVE:
+		match new_motion_state:
+			MOTION_STATE.IDLE:
+				_character_skin.idle()
+			MOTION_STATE.MOVE:
+				_character_skin.move(speed_ratio)
+			MOTION_STATE.JUMP:
+				_character_skin.jump()
+			MOTION_STATE.FALL:
+				_character_skin.fall()
+			MOTION_STATE.LAND:
+				_character_skin.land()
+		_motion_state = new_motion_state
+
+	if new_motion_state == MOTION_STATE.MOVE:
+		_footstep_tick -= delta
+		if _footstep_tick <= 0.0:
+			_step_sound.play()
+			_footstep_tick = lerp(footstep_interval_walk, footstep_interval_run, speed_ratio)
+	else:
+		_footstep_tick = 0.0
 
 
 func attack() -> void:
