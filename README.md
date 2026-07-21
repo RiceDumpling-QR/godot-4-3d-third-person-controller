@@ -17,6 +17,57 @@ It features a character that can run, jump, make a melee attack, aim, shoot, and
 
 There are two kinds of enemies: flying wasps that fire bullets and beetles that attack you on the ground. The environment comes with breakable crates, jumping pads, and coins that move to the player's character.
 
+## Evaluation branch structure
+
+This repository uses separate branches to keep the original game, ablated task, hidden verifier, and independent agent runs isolated from one another.
+
+```text
+RiceDumpling-QR/godot-4-3d-third-person-controller
+│
+├── main
+│   └── Unmodified original RoboBlast game
+│
+├── task/locomotion
+│   ├── Complete game with locomotion removed
+│   └── TASK.md containing the behavioral prompt
+│
+├── verifier/locomotion
+│   ├── Original working game
+│   ├── verifier/
+│   │   ├── locomotion_verifier.gd
+│   │   ├── locomotion_test.tscn
+│   │   ├── run_verifier.sh
+│   │   ├── README.md
+│   │   ├── probes/
+│   │   │   ├── world-relative.patch
+│   │   │   ├── fast-diagonal.patch
+│   │   │   ├── instant-velocity.patch
+│   │   │   ├── infinite-jump.patch
+│   │   │   └── no-rotation.patch
+│   │   └── results/
+│   │       ├── original.json
+│   │       ├── ablated.json
+│   │       ├── probe-results.json
+│   │       ├── claude-1.json
+│   │       ├── claude-2.json
+│   │       └── claude-3.json
+│   └── report/
+│       ├── index.html
+│       └── assets/
+│
+├── run/claude-1
+│   ├── Complete ablated game
+│   └── Claude's first attempted locomotion implementation
+│
+├── run/claude-2
+│   ├── Complete ablated game
+│   └── Claude's second attempted locomotion implementation
+│
+└── run/claude-3
+    ├── Complete ablated game
+    └── Claude's third attempted locomotion implementation
+```
+
 ## How to run:
 
 1. Download or clone the GitHub repository.
