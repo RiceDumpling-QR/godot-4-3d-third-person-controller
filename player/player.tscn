@@ -84,6 +84,8 @@ height = 2.65424
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
+floor_snap_length = 0.35
+floor_stop_on_slope = true
 script = ExtResource("1_rvo1c")
 bullet_speed = 14.0
 
