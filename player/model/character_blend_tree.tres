@@ -72,6 +72,12 @@ switch_mode = 1
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_42lpg"]
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_idle_fall"]
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_move_fall"]
+xfade_time = 0.1
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_k7175"]
 states/End/position = Vector2(701, 90)
 states/Start/position = Vector2(212, 90)
@@ -85,7 +91,7 @@ states/jump/node = SubResource("AnimationNodeAnimation_fy3xa")
 states/jump/position = Vector2(179, 207)
 states/move/node = SubResource("AnimationNodeBlendSpace1D_cfy75")
 states/move/position = Vector2(531, 90)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_5sbif"), "idle", "move", SubResource("AnimationNodeStateMachineTransition_sawiy"), "move", "idle", SubResource("AnimationNodeStateMachineTransition_xu61x"), "jump", "fall", SubResource("AnimationNodeStateMachineTransition_2yld2"), "idle", "jump", SubResource("AnimationNodeStateMachineTransition_ad878"), "fall", "ground_impact", SubResource("AnimationNodeStateMachineTransition_63es0"), "ground_impact", "idle", SubResource("AnimationNodeStateMachineTransition_bsdcg"), "ground_impact", "move", SubResource("AnimationNodeStateMachineTransition_rbpx6"), "move", "jump", SubResource("AnimationNodeStateMachineTransition_42lpg")]
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_5sbif"), "idle", "move", SubResource("AnimationNodeStateMachineTransition_sawiy"), "move", "idle", SubResource("AnimationNodeStateMachineTransition_xu61x"), "jump", "fall", SubResource("AnimationNodeStateMachineTransition_2yld2"), "idle", "jump", SubResource("AnimationNodeStateMachineTransition_ad878"), "fall", "ground_impact", SubResource("AnimationNodeStateMachineTransition_63es0"), "ground_impact", "idle", SubResource("AnimationNodeStateMachineTransition_bsdcg"), "ground_impact", "move", SubResource("AnimationNodeStateMachineTransition_rbpx6"), "move", "jump", SubResource("AnimationNodeStateMachineTransition_42lpg"), "idle", "fall", SubResource("AnimationNodeStateMachineTransition_idle_fall"), "move", "fall", SubResource("AnimationNodeStateMachineTransition_move_fall")]
 graph_offset = Vector2(4, -47)
 
 [resource]
