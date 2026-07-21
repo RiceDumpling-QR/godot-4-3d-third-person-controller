@@ -12,7 +12,7 @@ description: "A 3D Third Person Shooter Controller Demo"
 | Ablated task and behavioral prompt | `task/locomotion` branch; see `TASK.md` |
 | Headless verifier and exact usage instructions | `verifier/locomotion` branch; see `verifier/README.md` and `verifier/run_verifier.sh` |
 | Anti-cheat probes and evidence | `verifier/locomotion` branch; see `verifier/probes/` and `verifier/results/probe-results.json` |
-| Agent runs | `run/claude-1`, `run/claude-2`, and `run/claude-3`; scores are in `verifier/locomotion:verifier/results/`, and each diff is against `task/locomotion` |
+| Agent runs | Claude: `run/claude-1`, `run/claude-2`, `run/claude-3`; Codex: `run/codex-1`, `run/codex-2`, `run/codex-3`. Diffs are against `task/locomotion`; scores are in `verifier/locomotion:verifier/results/` |
 | Browser-ready HTML writeup with visuals | `verifier/locomotion` branch; open `report/index.html` directly—no build step is required |
 
 Run the headless verifier from the root of the `verifier/locomotion` branch:
@@ -41,7 +41,9 @@ RiceDumpling-QR/godot-4-3d-third-person-controller
 │   ├── verifier/
 │   │   ├── locomotion_verifier.gd
 │   │   ├── locomotion_test.tscn
+│   │   ├── locomotion_collision_test.tscn
 │   │   ├── run_verifier.sh
+│   │   ├── reproduce_all.sh
 │   │   ├── README.md
 │   │   ├── probes/
 │   │   │   ├── world-relative.patch
@@ -55,10 +57,19 @@ RiceDumpling-QR/godot-4-3d-third-person-controller
 │   │       ├── probe-results.json
 │   │       ├── claude-1.json
 │   │       ├── claude-2.json
-│   │       └── claude-3.json
+│   │       ├── claude-3.json
+│   │       ├── codex-1.json
+│   │       ├── codex-2.json
+│   │       └── codex-3.json
 │   └── report/
 │       ├── index.html
 │       └── assets/
+│           ├── systemdesign.png
+│           ├── original-game.gif
+│           ├── ablated-game.gif
+│           ├── claude-1.gif
+│           ├── claude-2.gif
+│           └── claude-3.gif
 │
 ├── run/claude-1
 │   ├── Complete ablated game
@@ -68,9 +79,21 @@ RiceDumpling-QR/godot-4-3d-third-person-controller
 │   ├── Complete ablated game
 │   └── Claude's second attempted locomotion implementation
 │
-└── run/claude-3
+├── run/claude-3
+│   ├── Complete ablated game
+│   └── Claude's third attempted locomotion implementation
+│
+├── run/codex-1
+│   ├── Complete ablated game
+│   └── Codex's first isolated locomotion implementation
+│
+├── run/codex-2
+│   ├── Complete ablated game
+│   └── Codex's second isolated locomotion implementation
+│
+└── run/codex-3
     ├── Complete ablated game
-    └── Claude's third attempted locomotion implementation
+    └── Codex's third isolated locomotion implementation
 ```
 
 # RoboBlast: Third-Person Shooter demo (Godot 4, 3D)
