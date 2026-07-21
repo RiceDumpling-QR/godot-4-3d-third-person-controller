@@ -1,7 +1,7 @@
 {
   "checks": [
     {
-      "maximum": 15.0,
+      "maximum": 12.0,
       "measurements": {
         "direction_alignments": {
           "move_down": 1.0,
@@ -41,11 +41,11 @@
         "minimum_distance": 4.5
       },
       "name": "basic_movement",
-      "points": 7.5,
+      "points": 6.0,
       "status": "PARTIAL"
     },
     {
-      "maximum": 20.0,
+      "maximum": 15.0,
       "measurements": {
         "base_direction": [
           -0.0000000443457786047929,
@@ -60,22 +60,22 @@
         ]
       },
       "name": "camera_relative_movement",
-      "points": 20.0,
+      "points": 15.0,
       "status": "PASS"
     },
     {
-      "maximum": 10.0,
+      "maximum": 8.0,
       "measurements": {
         "diagonal_distance": 4.86666774749756,
         "ratio": 0.999999902019793,
         "straight_distance": 4.86666822433472
       },
       "name": "diagonal_normalization",
-      "points": 10.0,
+      "points": 8.0,
       "status": "PASS"
     },
     {
-      "maximum": 10.0,
+      "maximum": 8.0,
       "measurements": {
         "speed_samples": [
           0.16666667163372,
@@ -85,21 +85,22 @@
         ]
       },
       "name": "acceleration",
-      "points": 10.0,
+      "points": 8.0,
       "status": "PASS"
     },
     {
-      "maximum": 10.0,
+      "maximum": 8.0,
       "measurements": {
         "final_speed": 0.766670227050781,
-        "first_speed": 7.76666688919067
+        "first_speed": 7.76666688919067,
+        "movement_prerequisite_met": true
       },
       "name": "stopping",
-      "points": 5.0,
+      "points": 4.0,
       "status": "PARTIAL"
     },
     {
-      "maximum": 10.0,
+      "maximum": 8.0,
       "measurements": {
         "angular_error_degrees": 0.0,
         "facing": [
@@ -114,48 +115,51 @@
         ]
       },
       "name": "travel_orientation",
-      "points": 10.0,
+      "points": 8.0,
       "status": "PASS"
     },
     {
-      "maximum": 10.0,
+      "maximum": 9.0,
       "measurements": {
         "final_height": 0.000903978943824768,
         "landed": true,
         "left_floor": true,
         "max_height": 1.58423745632172,
         "max_rise": 1.58397704677191,
-        "start_height": 0.000260409549809992
+        "start_height": 0.000260409549809992,
+        "valid_launch": true
       },
       "name": "grounded_jump",
-      "points": 10.0,
+      "points": 9.0,
       "status": "PASS"
     },
     {
-      "maximum": 5.0,
+      "maximum": 4.0,
       "measurements": {
+        "jump_prerequisite_met": true,
         "velocity_after": -1.0,
         "velocity_before": -0.5
       },
       "name": "midair_jump_rejection",
-      "points": 5.0,
+      "points": 4.0,
       "status": "PASS"
     },
     {
-      "maximum": 5.0,
+      "maximum": 4.0,
       "measurements": {
         "difference": 2.16666686534882,
         "held_rise": 3.75064391212072,
         "tapped_rise": 1.58397704677191
       },
       "name": "variable_jump_height",
-      "points": 5.0,
+      "points": 4.0,
       "status": "PASS"
     },
     {
-      "maximum": 5.0,
+      "maximum": 4.0,
       "measurements": {
         "final_height": 0.000903606414794922,
+        "jump_prerequisite_met": true,
         "landed": true,
         "left_floor": true,
         "max_height": 3.75090432167053,
@@ -163,12 +167,80 @@
         "start_height": 0.000260409549809992
       },
       "name": "stable_landing",
+      "points": 4.0,
+      "status": "PASS"
+    },
+    {
+      "maximum": 7.0,
+      "measurements": {
+        "approached_wall": true,
+        "blocked_by_wall": true,
+        "displacement": [
+          -0.000000215816186255324,
+          0.000616988225374371,
+          2.24885654449463
+        ],
+        "final_position": [
+          -0.000000215816186255324,
+          0.000877397775184363,
+          2.24885654449463
+        ],
+        "slid_along_wall": true,
+        "slide_displacement": [
+          2.96984887123108,
+          0.000604058266617358,
+          2.24899983406067
+        ]
+      },
+      "name": "collision_aware_movement",
+      "points": 7.0,
+      "status": "PASS"
+    },
+    {
+      "maximum": 5.0,
+      "measurements": {
+        "falling_state": "fall",
+        "initial_state": "ground_impact",
+        "moving_state": "move",
+        "rising_state": "jump",
+        "tree_active": true
+      },
+      "name": "animation_integration",
+      "points": 5.0,
+      "status": "PASS"
+    },
+    {
+      "maximum": 3.0,
+      "measurements": {
+        "headless_note": "Checks feedback wiring because dummy headless audio does not expose playback state.",
+        "landing_stream_present": true,
+        "step_signal_connected": false,
+        "step_stream_present": true
+      },
+      "name": "locomotion_feedback",
+      "points": 1.5,
+      "status": "PARTIAL"
+    },
+    {
+      "maximum": 5.0,
+      "measurements": {
+        "attack_horizontal_speed": 9.76666641235352,
+        "attack_started": true,
+        "camera_preserved": true,
+        "camera_yaw_degrees": 90.0000025044782
+      },
+      "name": "camera_combat_preservation",
       "points": 5.0,
       "status": "PASS"
     }
   ],
+  "diagnostics": {
+    "fixture_player_found": true,
+    "missing_input_actions": [],
+    "player_script_loaded": true
+  },
   "godot_version": "4.6.3-stable (official)",
-  "label": "revised-claude-3-final",
+  "label": "claude-3",
   "maximum": 100.0,
-  "score": 87.5
+  "score": 88.5
 }

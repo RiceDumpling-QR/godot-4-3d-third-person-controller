@@ -11,32 +11,32 @@
         },
         "directions": {
           "move_down": [
-            0.0,
+            -0.000000174477747805213,
             0.0,
             -1.0
           ],
           "move_left": [
             1.0,
             0.0,
-            0.0
+            -0.000000174477747805213
           ],
           "move_right": [
             -1.0,
             0.0,
-            0.0
+            0.000000174477747805213
           ],
           "move_up": [
-            0.0,
+            0.000000174477747805213,
             0.0,
             1.0
           ]
         },
         "directions_passing": 4,
         "distances": {
-          "move_down": 6.80215787887573,
-          "move_left": 6.80215787887573,
-          "move_right": 6.80215787887573,
-          "move_up": 6.80215787887573
+          "move_down": 6.92333221435547,
+          "move_left": 6.92333221435547,
+          "move_right": 6.92333221435547,
+          "move_up": 6.92333221435547
         },
         "minimum_distance": 4.5
       },
@@ -48,15 +48,15 @@
       "maximum": 15.0,
       "measurements": {
         "base_direction": [
-          0.0,
+          0.000000174477747805213,
           0.0,
           1.0
         ],
-        "direction_change_degrees": 90.0000025044779,
+        "direction_change_degrees": 90.0000028939485,
         "turned_direction": [
           1.0,
           0.0,
-          -0.0000000437113847340243
+          -0.00000022498667817672
         ]
       },
       "name": "camera_relative_movement",
@@ -66,9 +66,9 @@
     {
       "maximum": 8.0,
       "measurements": {
-        "diagonal_distance": 5.89084148406982,
-        "ratio": 0.866025397964369,
-        "straight_distance": 6.80215787887573
+        "diagonal_distance": 7.25795459747314,
+        "ratio": 1.04833256194522,
+        "straight_distance": 6.92333221435547
       },
       "name": "diagonal_normalization",
       "points": 8.0,
@@ -78,10 +78,10 @@
       "maximum": 8.0,
       "measurements": {
         "speed_samples": [
-          0.800000011920929,
-          3.27608013153076,
-          6.35287094116211,
-          7.93017625808716
+          0.466666668653488,
+          2.33333325386047,
+          7.0,
+          8.0
         ]
       },
       "name": "acceleration",
@@ -92,7 +92,7 @@
       "maximum": 8.0,
       "measurements": {
         "final_speed": 0.0,
-        "first_speed": 7.18706178665161,
+        "first_speed": 7.43333339691162,
         "movement_prerequisite_met": true
       },
       "name": "stopping",
@@ -106,12 +106,12 @@
         "facing": [
           -1.0,
           0.0,
-          -0.0000694990158081055
+          0.000068620836827904
         ],
         "movement_direction": [
           -1.0,
           0.0,
-          0.0
+          0.000000150995802528087
         ]
       },
       "name": "travel_orientation",
@@ -121,12 +121,12 @@
     {
       "maximum": 9.0,
       "measurements": {
-        "final_height": 0.000904127955436707,
+        "final_height": 0.000895693898200989,
         "landed": true,
         "left_floor": true,
-        "max_height": 2.3009045124054,
-        "max_rise": 2.30064410285559,
-        "start_height": 0.000260409549809992,
+        "max_height": 1.92589581012726,
+        "max_rise": 1.92570050468203,
+        "start_height": 0.000195305445231497,
         "valid_launch": true
       },
       "name": "grounded_jump",
@@ -137,8 +137,8 @@
       "maximum": 4.0,
       "measurements": {
         "jump_prerequisite_met": true,
-        "velocity_after": -0.925000190734863,
-        "velocity_before": -0.425000190734863
+        "velocity_after": -0.979999542236328,
+        "velocity_before": -0.479999542236328
       },
       "name": "midair_jump_rejection",
       "points": 4.0,
@@ -147,9 +147,9 @@
     {
       "maximum": 4.0,
       "measurements": {
-        "difference": 0.38916540145874,
-        "held_rise": 2.68980950431433,
-        "tapped_rise": 2.30064410285559
+        "difference": 1.89033615589142,
+        "held_rise": 3.81603666057345,
+        "tapped_rise": 1.92570050468203
       },
       "name": "variable_jump_height",
       "points": 4.0,
@@ -158,13 +158,13 @@
     {
       "maximum": 4.0,
       "measurements": {
-        "final_height": 0.000648044049739838,
+        "final_height": 0.000244364142417908,
         "jump_prerequisite_met": true,
         "landed": true,
         "left_floor": true,
-        "max_height": 2.64715361595154,
-        "max_rise": 2.64689320640173,
-        "start_height": 0.000260409549809992
+        "max_height": 3.36223101615906,
+        "max_rise": 3.36203571071383,
+        "start_height": 0.000195305445231497
       },
       "name": "stable_landing",
       "points": 4.0,
@@ -176,20 +176,20 @@
         "approached_wall": true,
         "blocked_by_wall": true,
         "displacement": [
+          0.000000502297041293787,
           0.0,
-          0.00016298150876537,
-          2.24763917922974
+          2.24989604949951
         ],
         "final_position": [
-          0.0,
-          0.000423391058575362,
-          2.24763917922974
+          0.000000502297041293787,
+          0.000195305445231497,
+          2.24989604949951
         ],
         "slid_along_wall": true,
         "slide_displacement": [
-          -3.75812077522278,
-          0.00060395005857572,
-          2.24838471412659
+          -4.66074466705322,
+          0.000804686453193426,
+          2.24899983406067
         ]
       },
       "name": "collision_aware_movement",
@@ -214,17 +214,17 @@
       "measurements": {
         "headless_note": "Checks feedback wiring because dummy headless audio does not expose playback state.",
         "landing_stream_present": true,
-        "step_signal_connected": true,
+        "step_signal_connected": false,
         "step_stream_present": true
       },
       "name": "locomotion_feedback",
-      "points": 3.0,
-      "status": "PASS"
+      "points": 1.5,
+      "status": "PARTIAL"
     },
     {
       "maximum": 5.0,
       "measurements": {
-        "attack_horizontal_speed": 9.0,
+        "attack_horizontal_speed": 10.0,
         "attack_started": true,
         "camera_preserved": true,
         "camera_yaw_degrees": 90.0000025044782
@@ -240,7 +240,7 @@
     "player_script_loaded": true
   },
   "godot_version": "4.6.3-stable (official)",
-  "label": "original",
+  "label": "codex-sanitized-2",
   "maximum": 100.0,
-  "score": 100.0
+  "score": 98.5
 }

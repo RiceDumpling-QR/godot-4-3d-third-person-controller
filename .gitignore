@@ -4,3 +4,5 @@ exports/
 bin/
 
 .env
+.DS_Store
+.codex/

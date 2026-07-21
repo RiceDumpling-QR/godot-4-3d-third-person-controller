@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#171717"/>
+    </marker>
+    <style>
+      .box{stroke:#171717;stroke-width:2.5}.line{fill:none;stroke:#171717;stroke-width:2.5}.arrow{fill:none;stroke:#171717;stroke-width:2.5;marker-end:url(#arrow)}
+      .blue{fill:#cfe0f2}.pink{fill:#f4c7ca}.green{fill:#d8ead1}.yellow{fill:#fff0c8}.agent{fill:#ffedb4}
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#111;text-anchor:middle}.title{font-size:36px;font-weight:650}.label{font-size:27px}.small{font-size:23px}.tiny{font-size:20px}
+    </style>
+  </defs>
+  <rect width="1600" height="1120" fill="#fff"/>
+
+  <!-- Source and ablation -->
+  <rect class="box yellow" x="70" y="45" width="390" height="76" rx="16"/>
+  <text class="title" x="265" y="94">Anti-cheat Near Misses</text>
+  <rect class="box blue" x="105" y="170" width="320" height="112" rx="20"/>
+  <text class="title" x="265" y="238">Original Game</text>
+  <path class="arrow" d="M265 170 L265 126"/>
+  <path class="arrow" d="M265 282 L265 365"/>
+  <text class="label" x="350" y="337">ablation</text>
+  <rect class="box pink" x="105" y="370" width="320" height="112" rx="20"/>
+  <text class="title" x="265" y="438">Ablated Game</text>
+
+  <!-- Prompt -->
+  <ellipse class="box green" cx="670" cy="125" rx="125" ry="70"/>
+  <text class="title" x="670" y="137">TASK.md</text>
+
+  <!-- Agent split -->
+  <path class="line" d="M425 426 L500 426 L500 300"/>
+  <path class="line" d="M500 300 L835 300"/>
+  <path class="arrow" d="M670 195 L670 268"/>
+  <text class="small" x="532" y="285">same ablated game + prompt</text>
+  <path class="arrow" d="M570 300 L570 342"/>
+  <path class="arrow" d="M820 300 L820 342"/>
+  <polygon class="box agent" points="570,342 680,405 570,468 460,405"/>
+  <text class="title" x="570" y="417">Claude</text>
+  <polygon class="box agent" points="820,342 930,405 820,468 710,405"/>
+  <text class="title" x="820" y="417">Codex</text>
+
+  <!-- Claude outputs -->
+  <path class="line" d="M570 342 L570 320 L980 320 L980 405"/>
+  <path class="line" d="M980 240 L980 530"/>
+  <path class="line" d="M980 250 L1020 250 M980 405 L1020 405 M980 520 L1020 520"/>
+  <rect class="box blue" x="1020" y="195" width="235" height="105" rx="18"/>
+  <text class="label" x="1137" y="240">run/claude-1</text><text class="small" x="1137" y="275">attempt 1</text>
+  <rect class="box blue" x="1020" y="350" width="235" height="105" rx="18"/>
+  <text class="label" x="1137" y="395">run/claude-2</text><text class="small" x="1137" y="430">attempt 2</text>
+  <rect class="box blue" x="1020" y="475" width="235" height="105" rx="18"/>
+  <text class="label" x="1137" y="520">run/claude-3</text><text class="small" x="1137" y="555">attempt 3</text>
+
+  <!-- Codex outputs -->
+  <path class="line" d="M930 405 L1320 405"/>
+  <path class="line" d="M1320 240 L1320 530"/>
+  <path class="line" d="M1320 250 L1360 250 M1320 405 L1360 405 M1320 520 L1360 520"/>
+  <rect class="box green" x="1360" y="195" width="205" height="105" rx="18"/>
+  <text class="label" x="1462" y="240">run/codex-1</text><text class="small" x="1462" y="275">attempt 1</text>
+  <rect class="box green" x="1360" y="350" width="205" height="105" rx="18"/>
+  <text class="label" x="1462" y="395">run/codex-2</text><text class="small" x="1462" y="430">attempt 2</text>
+  <rect class="box green" x="1360" y="475" width="205" height="105" rx="18"/>
+  <text class="label" x="1462" y="520">run/codex-3</text><text class="small" x="1462" y="555">attempt 3</text>
+
+  <!-- Verifier -->
+  <rect class="box blue" x="70" y="650" width="1495" height="68"/>
+  <text class="title" x="818" y="696">Headless Verifier — identical rubric for every candidate</text>
+  <path class="arrow" d="M265 482 L265 645"/>
+  <path class="arrow" d="M1137 580 L1137 645"/>
+  <path class="arrow" d="M1462 580 L1462 645"/>
+
+  <!-- Results -->
+  <path class="arrow" d="M265 718 L265 770"/>
+  <rect class="box green" x="80" y="775" width="440" height="255" rx="28"/>
+  <text class="title" x="300" y="825">Verifier validation ✓</text>
+  <text class="label" x="300" y="875">Original: 100</text>
+  <text class="label" x="300" y="920">Ablated: very low</text>
+  <text class="label" x="300" y="965">Near misses: rejected</text>
+  <text class="small" x="300" y="1005">proves discrimination + anti-hack robustness</text>
+
+  <path class="arrow" d="M965 718 L965 770"/>
+  <rect class="box green" x="580" y="775" width="770" height="255" rx="28"/>
+  <text class="title" x="965" y="825">Independent agent outcomes</text>
+  <text class="label" x="790" y="880">Claude Code</text>
+  <text class="small" x="790" y="925">3 branches · separately scored</text>
+  <text class="label" x="1140" y="880">Codex</text>
+  <text class="small" x="1140" y="925">3 branches · separately scored</text>
+  <text class="small" x="965" y="985">Same TASK.md · same ablated base · same verifier</text>
+
+  <text class="tiny" x="800" y="1085">Branch-isolated attempts preserve reproducibility and keep the verifier out of the agents’ reach.</text>
+</svg>

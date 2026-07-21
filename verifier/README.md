@@ -17,30 +17,55 @@ GODOT_BIN=/path/to/Godot verifier/run_verifier.sh \
   res://verifier/results/my-run.json my-run
 ```
 
-The command runs without opening the editor, prints an itemized score out of 100, writes JSON, and exits. Candidate gameplay failures receive partial or zero points; verifier crashes are execution failures.
+The runner first imports project assets, then runs without opening the editor. It prints an itemized score out of 100, writes JSON, and exits. Candidate gameplay failures receive partial or zero points; verifier crashes are execution failures. Set `SKIP_IMPORT=1` only for a snapshot whose `.godot/imported` cache is already complete.
+
+## Reproduce the complete evaluation
+
+From the verifier branch, regenerate every canonical result from clean Git snapshots:
+
+```bash
+GODOT_BIN=/path/to/Godot verifier/reproduce_all.sh
+```
+
+The script exports `main`, `task/locomotion`, and `run/claude-1` through
+`run/claude-3` without using their worktrees. It overlays the current hidden verifier,
+runs every target, applies each probe independently to a clean original snapshot, and
+publishes `verifier/results` only after all runs succeed. It requires `git`, `tar`,
+`rsync`, and `jq`.
+
+The ref names can be overridden when needed, for example:
+
+```bash
+MAIN_REF=origin/main TASK_REF=origin/task/locomotion \
+  GODOT_BIN=/path/to/Godot verifier/reproduce_all.sh
+```
 
 ## Scoring
 
 | Observable outcome | Points |
 |---|---:|
-| Four-direction ground movement (3.75 points per correct direction) | 15 |
-| Camera-relative direction | 20 |
-| Diagonal speed normalization | 10 |
-| Gradual acceleration | 10 |
-| Stable deceleration and stop | 10 |
-| Visible facing follows travel | 10 |
-| Grounded jump | 10 |
-| Midair jump rejection | 5 |
-| Held jump exceeds tapped jump | 5 |
-| Stable landing | 5 |
+| Four-direction ground movement (3 points per correct direction) | 12 |
+| Camera-relative direction | 15 |
+| Diagonal speed normalization | 8 |
+| Gradual acceleration | 8 |
+| Stable deceleration and stop | 8 |
+| Visible facing follows travel | 8 |
+| Grounded jump | 9 |
+| Midair jump rejection | 4 |
+| Held jump exceeds tapped jump | 4 |
+| Stable landing | 4 |
+| Collision blocking and wall sliding | 7 |
+| Locomotion animation transitions | 5 |
+| Footstep and landing feedback wiring | 3 |
+| Camera control and melee attack preservation | 5 |
 
-The grader drives the configured input actions in a controlled flat scene and measures displacement, velocity, orientation, jump height, and grounded state. Basic movement scores each of forward, backward, left, and right independently, requiring meaningful displacement in the correct direction. It does not search source text or require particular function names.
+The grader drives the configured input actions in controlled flat and collision scenes. It measures displacement, velocity, orientation, jump height, grounded state, collision response, animation state, feedback wiring, camera yaw, and attack state. Basic movement scores each direction independently. Movement-dependent checks are gated so an inert player cannot earn stopping or jump-safety credit merely by remaining still. It does not search source text or require particular function names.
 
 ## Recorded validation
 
 - Original implementation: 100/100.
-- Ablated task: 12/100; it launches, but earns no movement or jump implementation credit.
-- Near-miss probes: 80–90/100, with every deliberately defective solution rejected.
+- Ablated task: 7.5/100; it launches and preserves unrelated gameplay, but earns no locomotion or jump credit.
+- Near-miss probes: 85–92/100, with every deliberately defective solution losing the points tied to its defect.
 
 Probe patches and captured results are stored under `probes/` and `results/`.
 Each probe applies independently to the original working game; do not stack them.

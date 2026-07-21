@@ -86,6 +86,23 @@
 
     figure img { object-fit: cover; }
 
+    .system-diagram {
+      aspect-ratio: auto;
+      object-fit: contain;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .system-figure {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+      gap: 30px;
+      align-items: center;
+    }
+
+    .system-figure figcaption { padding: 0; }
+    .system-figure figcaption p { color: #444; font-size: 15px; line-height: 1.6; }
+
     .visual-placeholder {
       display: grid;
       place-items: center;
@@ -161,12 +178,38 @@
     .agent-summary div { padding: 12px; background: var(--soft); font-size: 13px; }
     .agent-summary strong { display: block; margin-bottom: 3px; }
 
+    .run-meta {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 4px 12px;
+      margin: 0 0 15px;
+      padding: 11px 12px;
+      background: var(--soft);
+      font-size: 12px;
+    }
+
+    .run-meta dt { color: var(--muted); font-weight: 650; }
+    .run-meta dd { margin: 0; }
+
+    .prompt {
+      margin-top: 18px;
+      padding: 20px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--soft);
+      color: #333;
+      font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: pre-wrap;
+    }
+
     footer { padding-top: 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 
     @media (max-width: 760px) {
       main { padding: 38px 0; }
-      .two-col, .task-grid, .probe-grid, .agent { grid-template-columns: 1fr; }
+      .two-col, .task-grid, .probe-grid, .agent, .system-figure { grid-template-columns: 1fr; }
       .agent-summary { grid-template-columns: 1fr; }
+      .system-figure figcaption { padding-top: 10px; }
     }
   </style>
 </head>
@@ -175,8 +218,17 @@
     <header>
       <p class="kicker">RoboBlast · Godot 4.6 · Locomotion recovery benchmark</p>
       <h1>Can an agent rebuild the feel of movement?</h1>
-      <p class="intro">We removed RoboBlast’s complete third-person locomotion system, asked three isolated Claude agents to restore it, and graded observable behavior with a hidden headless verifier.</p>
+      <p class="intro">We removed RoboBlast’s complete third-person locomotion system, ran three isolated Claude attempts and three supplemental Codex attempts, and graded observable behavior with one hidden headless verifier.</p>
     </header>
+
+    <section id="system-design">
+      <p class="kicker">00 · System design</p>
+      <h2>One ablated task, six isolated attempts, one verifier.</h2>
+      <figure class="system-figure">
+        <img class="system-diagram" src="assets/systemdesign.png" alt="System diagram showing the original and ablated game, TASK.md, three Claude branches, three Codex branches, anti-cheat near misses, and the shared headless verifier">
+        <figcaption><p>The working original is ablated into the agent task. Three Claude runs and three supplemental Codex runs receive only the ablated game and behavioral prompt; the hidden verifier then scores the original, ablation, near-miss patches, and every agent output on the same behavioral metrics.</p></figcaption>
+      </figure>
+    </section>
 
     <section id="task">
       <div class="task-grid">
@@ -198,21 +250,25 @@
 
     <section id="metrics">
       <p class="kicker">02 · Verification metrics</p>
-      <h2>Ten checks, 100 points.</h2>
+      <h2>Fourteen behavioral checks, 100 points.</h2>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Metric</th><th>Observed behavior</th><th class="num">Points</th></tr></thead>
           <tbody>
-            <tr><td>Basic movement</td><td>Four directional inputs produce sufficient, correctly aligned travel.</td><td class="num">15</td></tr>
-            <tr><td>Camera relative</td><td>Turning the camera rotates the movement direction.</td><td class="num">20</td></tr>
-            <tr><td>Diagonal normalization</td><td>Diagonal travel remains bounded relative to single-axis travel.</td><td class="num">10</td></tr>
-            <tr><td>Acceleration</td><td>Speed builds gradually and reaches the intended running range.</td><td class="num">10</td></tr>
-            <tr><td>Stopping</td><td>Velocity decreases and settles near zero after input release.</td><td class="num">10</td></tr>
-            <tr><td>Travel orientation</td><td>The visible character faces its movement direction.</td><td class="num">10</td></tr>
-            <tr><td>Grounded jump</td><td>A grounded press leaves the floor and reaches meaningful height.</td><td class="num">10</td></tr>
-            <tr><td>Midair rejection</td><td>A second press while airborne does not relaunch the player.</td><td class="num">5</td></tr>
-            <tr><td>Variable jump</td><td>Holding jump produces a higher arc than tapping.</td><td class="num">5</td></tr>
-            <tr><td>Stable landing</td><td>The player returns to its starting ground height and settles.</td><td class="num">5</td></tr>
+            <tr><td>Basic movement</td><td>Four directional inputs produce sufficient, correctly aligned travel.</td><td class="num">12</td></tr>
+            <tr><td>Camera relative</td><td>Turning the camera rotates the movement direction.</td><td class="num">15</td></tr>
+            <tr><td>Diagonal normalization</td><td>Diagonal travel remains bounded relative to single-axis travel.</td><td class="num">8</td></tr>
+            <tr><td>Acceleration</td><td>Speed builds gradually and reaches the intended running range.</td><td class="num">8</td></tr>
+            <tr><td>Stopping</td><td>A moving player decelerates and settles near zero after release.</td><td class="num">8</td></tr>
+            <tr><td>Travel orientation</td><td>The visible character faces its movement direction.</td><td class="num">8</td></tr>
+            <tr><td>Grounded jump</td><td>A grounded press leaves the floor and reaches meaningful height.</td><td class="num">9</td></tr>
+            <tr><td>Midair rejection</td><td>A second press during a real jump does not relaunch the player.</td><td class="num">4</td></tr>
+            <tr><td>Variable jump</td><td>Holding jump produces a higher arc than tapping.</td><td class="num">4</td></tr>
+            <tr><td>Stable landing</td><td>A real jump returns to its starting ground height and settles.</td><td class="num">4</td></tr>
+            <tr><td>Collision response</td><td>The controller stops at a wall and can slide along it.</td><td class="num">7</td></tr>
+            <tr><td>Animation integration</td><td>Movement and jump inputs drive the expected animation states.</td><td class="num">5</td></tr>
+            <tr><td>Locomotion feedback</td><td>Footstep and landing audio are present and correctly wired.</td><td class="num">3</td></tr>
+            <tr><td>Camera + combat</td><td>Camera yaw and melee attacks still respond after the repair.</td><td class="num">5</td></tr>
           </tbody>
         </table>
       </div>
@@ -234,7 +290,7 @@
           <img src="assets/ablated-game.gif" alt="Ablated RoboBlast player remaining stationary while the camera moves">
           <figcaption>
             <strong>Ablated · <a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/task/locomotion">task/locomotion</a></strong>
-            <p>The camera and game still respond, but WASD and jump no longer produce locomotion.</p>
+            <p>The camera and game still respond, but WASD and jump no longer produce locomotion. Any apparent movement of the player character is passive displacement caused by another character pushing it, not movement generated by the player's controls.</p>
           </figcaption>
         </figure>
       </div>
@@ -243,17 +299,21 @@
         <table>
           <thead><tr><th>Metric</th><th class="num">Original</th><th class="num">Ablated</th><th>What the comparison shows</th></tr></thead>
           <tbody>
-            <tr><td>Basic movement</td><td class="num pass">15/15</td><td class="num fail">0/15</td><td>The removed build cannot translate.</td></tr>
-            <tr><td>Camera relative</td><td class="num pass">20/20</td><td class="num fail">0/20</td><td>No movement exists to follow camera yaw.</td></tr>
-            <tr><td>Diagonal normalization</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>No straight or diagonal travel is produced.</td></tr>
-            <tr><td>Acceleration</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>Horizontal speed remains zero.</td></tr>
-            <tr><td>Stopping</td><td class="num pass">10/10</td><td class="num partial">5/10</td><td>Zero velocity satisfies only the final-stop half of the check.</td></tr>
-            <tr><td>Travel orientation</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>The model receives no travel direction.</td></tr>
-            <tr><td>Grounded jump</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>The player does not launch.</td></tr>
-            <tr><td>Midair rejection</td><td class="num pass">5/5</td><td class="num pass">5/5</td><td>No jump means no illegal second jump; this is incidental safety credit.</td></tr>
-            <tr><td>Variable jump</td><td class="num pass">5/5</td><td class="num fail">0/5</td><td>Tap and hold both produce no height.</td></tr>
-            <tr><td>Stable landing</td><td class="num pass">5/5</td><td class="num partial">2/5</td><td>Height remains stable, but no valid jump-and-land cycle occurs.</td></tr>
-            <tr><th>Total</th><th class="num">100/100</th><th class="num">12/100</th><th>Correct behavior is accepted; the ablation stays runnable but scores low.</th></tr>
+            <tr><td>Basic movement</td><td class="num pass">12/12</td><td class="num fail">0/12</td><td>The removed build cannot translate.</td></tr>
+            <tr><td>Camera relative</td><td class="num pass">15/15</td><td class="num fail">0/15</td><td>No movement exists to follow camera yaw.</td></tr>
+            <tr><td>Diagonal normalization</td><td class="num pass">8/8</td><td class="num fail">0/8</td><td>No straight or diagonal travel is produced.</td></tr>
+            <tr><td>Acceleration</td><td class="num pass">8/8</td><td class="num fail">0/8</td><td>Horizontal speed remains zero.</td></tr>
+            <tr><td>Stopping</td><td class="num pass">8/8</td><td class="num fail">0/8</td><td>The prerequisite now requires actual movement, preventing idle credit.</td></tr>
+            <tr><td>Travel orientation</td><td class="num pass">8/8</td><td class="num fail">0/8</td><td>The model receives no travel direction.</td></tr>
+            <tr><td>Grounded jump</td><td class="num pass">9/9</td><td class="num fail">0/9</td><td>The player does not launch.</td></tr>
+            <tr><td>Midair rejection</td><td class="num pass">4/4</td><td class="num fail">0/4</td><td>A valid initial jump is required, preventing idle safety credit.</td></tr>
+            <tr><td>Variable jump</td><td class="num pass">4/4</td><td class="num fail">0/4</td><td>Tap and hold both produce no height.</td></tr>
+            <tr><td>Stable landing</td><td class="num pass">4/4</td><td class="num fail">0/4</td><td>A valid jump-and-land cycle is required.</td></tr>
+            <tr><td>Collision response</td><td class="num pass">7/7</td><td class="num fail">0/7</td><td>No controlled motion reaches the wall fixture.</td></tr>
+            <tr><td>Animation integration</td><td class="num pass">5/5</td><td class="num partial">1/5</td><td>The tree remains active, but locomotion transitions are absent.</td></tr>
+            <tr><td>Locomotion feedback</td><td class="num pass">3/3</td><td class="num partial">1.5/3</td><td>Landing audio remains, but the footstep signal is disconnected.</td></tr>
+            <tr><td>Camera + combat</td><td class="num pass">5/5</td><td class="num pass">5/5</td><td>The unrelated controls intentionally remain intact.</td></tr>
+            <tr><th>Total</th><th class="num">100/100</th><th class="num">7.5/100</th><th>Correct behavior is accepted; the ablation stays runnable but scores low.</th></tr>
           </tbody>
         </table>
       </div>
@@ -271,11 +331,11 @@
           <table>
             <thead><tr><th>Probe</th><th>Deliberate defect</th><th>Rejected by</th><th class="num">Score</th></tr></thead>
             <tbody>
-              <tr><td>world-relative</td><td>Movement ignores camera yaw.</td><td>Camera relative</td><td class="num">80</td></tr>
-              <tr><td>fast-diagonal</td><td>Two-axis input moves too quickly.</td><td>Diagonal normalization</td><td class="num">90</td></tr>
-              <tr><td>instant-velocity</td><td>Speed snaps on and off.</td><td>Acceleration, stopping</td><td class="num">88</td></tr>
-              <tr><td>infinite-jump</td><td>Held input reapplies jump in air.</td><td>Midair rejection, landing</td><td class="num">90</td></tr>
-              <tr><td>no-rotation</td><td>The model never faces travel.</td><td>Travel orientation</td><td class="num">90</td></tr>
+              <tr><td>world-relative</td><td>Movement ignores camera yaw.</td><td>Camera relative</td><td class="num">85</td></tr>
+              <tr><td>fast-diagonal</td><td>Two-axis input moves too quickly.</td><td>Diagonal normalization</td><td class="num">92</td></tr>
+              <tr><td>instant-velocity</td><td>Speed snaps on and off.</td><td>Acceleration, stopping</td><td class="num">86.5</td></tr>
+              <tr><td>infinite-jump</td><td>Held input reapplies jump in air.</td><td>Midair rejection, landing</td><td class="num">92</td></tr>
+              <tr><td>no-rotation</td><td>The model never faces travel.</td><td>Travel orientation</td><td class="num">92</td></tr>
             </tbody>
           </table>
         </div>
@@ -283,23 +343,45 @@
       <div class="baseline-note"><strong>Result:</strong> all 5/5 probes lost the points associated with their intended defect.</div>
     </section>
 
+    <section id="prompt">
+      <p class="kicker">05 · Audience-facing prompt</p>
+      <h2>One visible specification for every agent.</h2>
+      <p>This is the complete <code>TASK.md</code> supplied to all three Claude runs. It is audience-facing: agents and readers see the same behavioral goal and isolation rules. The verifier, scoring thresholds, reference implementation, and probe patches remained hidden.</p>
+      <pre class="prompt" aria-label="Full TASK.md prompt"># Restore the Player Controls
+
+The player character no longer moves or jumps. Restore the controls so the game feels like a polished third-person action game again.
+
+Players should be able to move naturally with the existing movement controls, with movement following the camera’s point of view. The character should feel responsive without snapping abruptly, moving faster diagonally, drifting after the controls are released, or facing the wrong direction.
+
+Restore jumping so short presses and held presses feel different in a natural way. Jumping should behave consistently on the ground and in the air, and the character should return cleanly to normal movement after landing.
+
+Make sure the character’s movement, animation, footsteps, landing feedback, collisions, camera controls, and attacks still feel like parts of the same game. Do not remove or weaken unrelated gameplay to make the controls work.
+
+Use only the files in this checkout. Do not look for the removed solution in Git history, other branches, other project copies, the internet, or any hidden tests or grading files.</pre>
+    </section>
+
     <section id="agents">
-      <p class="kicker">05 · Three Claude attempts</p>
+      <p class="kicker">06 · Three Claude attempts</p>
       <h2>Same task, different recovery.</h2>
 
       <div class="agent-list">
         <article class="agent">
           <figure>
             <img src="assets/claude-1.gif" alt="Claude 1 implementation moving through RoboBlast while a keyboard overlay shows directional input">
-            <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-1">run/claude-1</a></strong><p>Directional input is visible in the overlay while the implementation moves through the level.</p></figcaption>
+            <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-1">run/claude-1</a></strong><p>Movement and jumping both work, but the jump arc is visibly too shallow; the verifier measured only 0.37 units of rise.</p></figcaption>
           </figure>
           <div class="agent-copy">
-            <div class="score-line"><h3>Claude 1</h3><strong>83.5/100</strong></div>
-            <div class="bar" aria-label="Claude 1 scored 83.5 out of 100"><span style="width:83.5%"></span></div>
-            <p>Movement, camera relativity, diagonal handling, stopping, orientation, air-jump rejection, variable jump, and landing largely work.</p>
+            <div class="score-line"><h3>Claude 1</h3><strong>81/100</strong></div>
+            <div class="bar" aria-label="Claude 1 scored 81 out of 100"><span style="width:81%"></span></div>
+            <dl class="run-meta">
+              <dt>Agent</dt><dd>Claude Code 2.1.216 · <code>claude-sonnet-5</code></dd>
+              <dt>Tools</dt><dd>Read, Edit, Bash · Godot MCP configured; no invocation recorded</dd>
+              <dt>Diff</dt><dd><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/commit/7b17e58"><code>7b17e58</code></a> · <code>player.gd</code>, <code>character_skin.gd</code> · +97/−0</dd>
+            </dl>
+            <p>Movement, camera relativity, diagonal handling, stopping, orientation, collision response, animation, and most jump behavior work.</p>
             <div class="agent-summary">
-              <div><strong>Lost points</strong>Basic movement 7.5/15; acceleration 7/10; grounded jump 4/10.</div>
-              <div><strong>Metric evidence</strong>Only two cardinal alignments passed, speed settled at 6 instead of the intended range, and jump rise was only 0.37 units.</div>
+              <div><strong>Lost points</strong>Basic movement 6/12; acceleration 5.5/8; grounded jump 0/9; feedback 1.5/3.</div>
+              <div><strong>Metric evidence</strong>Only two cardinal alignments passed, jump rise was only 0.37 units, and the footstep signal was not connected.</div>
             </div>
             <p class="muted"><strong>Failure classification:</strong> real agent bugs. The measurements directly violate the prompt’s directional, speed, and meaningful-jump requirements.</p>
           </div>
@@ -311,29 +393,39 @@
             <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-2">run/claude-2</a></strong><p>The overlay shows repeated movement and jump input, but the gameplay view remains stationary with no visible traversal.</p></figcaption>
           </figure>
           <div class="agent-copy">
-            <div class="score-line"><h3>Claude 2</h3><strong>16/100</strong></div>
-            <div class="bar" aria-label="Claude 2 scored 16 out of 100"><span style="width:16%"></span></div>
+            <div class="score-line"><h3>Claude 2</h3><strong>4.5/100</strong></div>
+            <div class="bar" aria-label="Claude 2 scored 4.5 out of 100"><span style="width:4.5%"></span></div>
+            <dl class="run-meta">
+              <dt>Agent</dt><dd>Claude Code 2.1.216 · <code>claude-sonnet-5</code></dd>
+              <dt>Tools</dt><dd>Read, Edit, Bash · Godot MCP configured; no invocation recorded</dd>
+              <dt>Diff</dt><dd><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/commit/eb7e840"><code>eb7e840</code></a> · <code>player.gd</code>, <code>character_skin.gd</code> · +113/−2</dd>
+            </dl>
             <p>The evaluated player produces zero horizontal displacement and no measurable jump arc; the result remains close to the ablated baseline.</p>
             <div class="agent-summary">
-              <div><strong>Lost points</strong>All movement metrics failed; grounded jump received 4/10; stopping and landing received incidental partial credit.</div>
-              <div><strong>Metric evidence</strong>All four travel distances and all sampled horizontal speeds were 0. Jump rise was 0 and no landing cycle completed.</div>
+              <div><strong>Lost points</strong>All locomotion, jump, and collision metrics failed; animation, feedback, and preservation were only partial.</div>
+              <div><strong>Metric evidence</strong>The diagnostic records <code>player_script_loaded=false</code>; travel, speed, and jump rise were all 0.</div>
             </div>
-            <p class="muted"><strong>Failure classification:</strong> real integration failure. The implementation did not produce the observable locomotion requested by the task.</p>
+            <p class="muted"><strong>Failure classification:</strong> real integration failure. A warning treated as an error at <code>player.gd:173</code> prevented the player script from loading, so the attempted locomotion never executed.</p>
           </div>
         </article>
 
         <article class="agent">
           <figure>
             <img src="assets/claude-3.gif" alt="Claude 3 implementation moving and jumping through RoboBlast while a keyboard overlay shows player input">
-            <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-3">run/claude-3</a></strong><p>Directional and jump input are visible in the overlay while the implementation traverses the level.</p></figcaption>
+            <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-3">run/claude-3</a></strong><p>Core movement, turning, and jumping all work. The remaining defects are subtler: two cardinal directions are misaligned, stopping leaves residual drift, and footsteps are disconnected.</p></figcaption>
           </figure>
           <div class="agent-copy">
-            <div class="score-line"><h3>Claude 3</h3><strong>87.5/100</strong></div>
-            <div class="bar" aria-label="Claude 3 scored 87.5 out of 100"><span style="width:87.5%"></span></div>
+            <div class="score-line"><h3>Claude 3</h3><strong>88.5/100</strong></div>
+            <div class="bar" aria-label="Claude 3 scored 88.5 out of 100"><span style="width:88.5%"></span></div>
+            <dl class="run-meta">
+              <dt>Agent</dt><dd>Claude Code 2.1.216 · <code>claude-sonnet-5</code></dd>
+              <dt>Tools</dt><dd>Read, Edit, Bash · Godot MCP configured; no invocation recorded</dd>
+              <dt>Diff</dt><dd><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/commit/5e83672"><code>5e83672</code></a> · <code>player.gd</code>, <code>character_skin.gd</code> · +126/−0</dd>
+            </dl>
             <p>Camera-relative movement, diagonal handling, acceleration, orientation, and the complete jump arc pass. The remaining issues are cardinal alignment and incomplete stopping.</p>
             <div class="agent-summary">
-              <div><strong>Lost points</strong>Basic movement 7.5/15; stopping 5/10.</div>
-              <div><strong>Metric evidence</strong>Only two cardinal alignments passed. Released movement slowed from 7.77 but retained 0.77 units/s instead of settling near zero.</div>
+              <div><strong>Lost points</strong>Basic movement 6/12; stopping 4/8; feedback 1.5/3.</div>
+              <div><strong>Metric evidence</strong>Only two cardinal alignments passed. Released movement retained 0.77 units/s, and the footstep signal was not connected.</div>
             </div>
             <p class="muted"><strong>Failure classification:</strong> real agent bugs. The verifier captured direction mismatch and residual drift that map directly to task requirements.</p>
           </div>
@@ -344,30 +436,53 @@
         <table>
           <thead><tr><th>Metric</th><th class="num">Claude 1</th><th class="num">Claude 2</th><th class="num">Claude 3</th></tr></thead>
           <tbody>
-            <tr><td>Basic movement</td><td class="num partial">7.5/15</td><td class="num fail">0/15</td><td class="num partial">7.5/15</td></tr>
-            <tr><td>Camera relative</td><td class="num pass">20/20</td><td class="num fail">0/20</td><td class="num pass">20/20</td></tr>
-            <tr><td>Diagonal normalization</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td class="num pass">10/10</td></tr>
-            <tr><td>Acceleration</td><td class="num partial">7/10</td><td class="num fail">0/10</td><td class="num pass">10/10</td></tr>
-            <tr><td>Stopping</td><td class="num pass">10/10</td><td class="num partial">5/10</td><td class="num partial">5/10</td></tr>
-            <tr><td>Travel orientation</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td class="num pass">10/10</td></tr>
-            <tr><td>Grounded jump</td><td class="num partial">4/10</td><td class="num partial">4/10</td><td class="num pass">10/10</td></tr>
-            <tr><td>Midair rejection</td><td class="num pass">5/5</td><td class="num pass">5/5</td><td class="num pass">5/5</td></tr>
-            <tr><td>Variable jump</td><td class="num pass">5/5</td><td class="num fail">0/5</td><td class="num pass">5/5</td></tr>
-            <tr><td>Stable landing</td><td class="num pass">5/5</td><td class="num partial">2/5</td><td class="num pass">5/5</td></tr>
-            <tr><th>Total</th><th class="num">83.5</th><th class="num">16</th><th class="num">87.5</th></tr>
+            <tr><td>Basic movement</td><td class="num partial">6/12</td><td class="num fail">0/12</td><td class="num partial">6/12</td></tr>
+            <tr><td>Camera relative</td><td class="num pass">15/15</td><td class="num fail">0/15</td><td class="num pass">15/15</td></tr>
+            <tr><td>Diagonal normalization</td><td class="num pass">8/8</td><td class="num fail">0/8</td><td class="num pass">8/8</td></tr>
+            <tr><td>Acceleration</td><td class="num partial">5.5/8</td><td class="num fail">0/8</td><td class="num pass">8/8</td></tr>
+            <tr><td>Stopping</td><td class="num pass">8/8</td><td class="num fail">0/8</td><td class="num partial">4/8</td></tr>
+            <tr><td>Travel orientation</td><td class="num pass">8/8</td><td class="num fail">0/8</td><td class="num pass">8/8</td></tr>
+            <tr><td>Grounded jump</td><td class="num fail">0/9</td><td class="num fail">0/9</td><td class="num pass">9/9</td></tr>
+            <tr><td>Midair rejection</td><td class="num pass">4/4</td><td class="num fail">0/4</td><td class="num pass">4/4</td></tr>
+            <tr><td>Variable jump</td><td class="num pass">4/4</td><td class="num fail">0/4</td><td class="num pass">4/4</td></tr>
+            <tr><td>Stable landing</td><td class="num pass">4/4</td><td class="num fail">0/4</td><td class="num pass">4/4</td></tr>
+            <tr><td>Collision response</td><td class="num pass">7/7</td><td class="num fail">0/7</td><td class="num pass">7/7</td></tr>
+            <tr><td>Animation integration</td><td class="num pass">5/5</td><td class="num partial">1/5</td><td class="num pass">5/5</td></tr>
+            <tr><td>Locomotion feedback</td><td class="num partial">1.5/3</td><td class="num partial">1.5/3</td><td class="num partial">1.5/3</td></tr>
+            <tr><td>Camera + combat</td><td class="num pass">5/5</td><td class="num partial">2/5</td><td class="num pass">5/5</td></tr>
+            <tr><th>Total</th><th class="num">81</th><th class="num">4.5</th><th class="num">88.5</th></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <section id="conclusion">
-      <p class="kicker">06 · Conclusion</p>
-      <h2>The task reached the intended partial-credit range.</h2>
-      <p>Two agents recovered most of the locomotion stack but missed measurable details; one attempt remained near the broken baseline. The spread from 16 to 87.5 shows that the task is solvable without being trivial, while the original, ablated, and probe results anchor the verifier at both extremes.</p>
-      <div class="analysis-note"><strong>Agent bug vs. verifier artifact.</strong> The reported agent failures are supported by direct displacement, speed, direction, and jump measurements. During calibration, the verifier itself was also corrected when Godot 4.6’s diagonal input behavior caused the working original to miss an initial threshold; every baseline and probe was then rerun with the final verifier.</div>
+    <section id="codex">
+      <p class="kicker">07 · Supplemental Codex comparison</p>
+      <h2>A second agent family raised the ceiling—and exposed a verifier caveat.</h2>
+      <p>Codex was run three times with <code>gpt-5.6-sol</code> through Codex CLI 0.144.2. Each rollout started from a fresh history-free export containing only the ablated project and the exact same <code>TASK.md</code>: no <code>.git</code>, original implementation, verifier, probes, or prior attempts. Godot MCP was enabled and available, although none of the three runs invoked it.</p>
+
+      <div class="table-wrap" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Run</th><th>Final diff from ablation</th><th>Measured losses</th><th class="num">Score</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/codex-1"><strong>run/codex-1</strong></a><br><code>dceda23</code></td><td>3 files · +121/−9</td><td>Basic movement 0/12; collision response 0/7; feedback 1.5/3.</td><td class="num partial">79.5</td></tr>
+            <tr><td><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/codex-2"><strong>run/codex-2</strong></a><br><code>7301cbb</code></td><td>2 files · +105/−7</td><td>Feedback 1.5/3; every motion, jump, collision, animation, and preservation check passed.</td><td class="num pass">98.5</td></tr>
+            <tr><td><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/codex-3"><strong>run/codex-3</strong></a><br><code>2dd61c3</code></td><td>3 files · +109/−9</td><td>Grounded jump 4/9; feedback 1.5/3.</td><td class="num pass">93.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="analysis-note"><strong>What this comparison supports.</strong> In this small sample Codex was more consistent than Claude: its scores were 79.5, 98.5, and 93.5, versus Claude’s 81, 4.5, and 88.5. Three runs do not establish general model superiority, but they show that agent choice materially changed the success distribution. Codex 1’s movement and collision failures and Codex 3’s weak launch were real behavioral defects. The repeated 1.5-point feedback loss is less certain: these implementations played step audio directly, while the headless check uses the original signal connection as a proxy because dummy audio exposes no playback state. That deduction is reported as a possible verifier artifact, not overstated as an agent failure.</div>
     </section>
 
-    <footer>Scores are read from <code>verifier/results</code>. Claude GIF placeholders intentionally remain blank until capture.</footer>
+    <section id="conclusion">
+      <p class="kicker">08 · Conclusion</p>
+      <h2>The verifier discriminates real outcomes—and the runs reveal where confidence ends.</h2>
+      <p>The original scores 100, the complete ablation scores 7.5, and all five targeted near misses lose the points tied to their defect. Claude spans 4.5–88.5 and Codex spans 79.5–98.5: agents can make substantial progress, but integration mistakes, reversed or missing movement, shallow launches, collision failures, drift, and disconnected feedback remain measurable.</p>
+      <div class="analysis-note"><strong>Final assessment.</strong> The strongest evidence is the locked verifier’s separation of the original, ablation, probes, and independently produced patches. The multi-run results add difficulty and variance evidence, while inspection separates real agent bugs from grader artifacts. Calibration also exposed verifier assumptions about jump timing, wall traversal, headless audio, attack observation, and import caches; those were corrected and every baseline, probe, and agent output was rerun. The remaining footstep proxy is disclosed rather than hidden. This makes the evaluation reproducible and useful without claiming more certainty than the measurements support.</div>
+    </section>
+
+    <footer>Scores are read from <code>verifier/results</code>. The displayed prompt matches <code>TASK.md</code> on <code>task/locomotion</code>.</footer>
   </main>
 </body>
 </html>
