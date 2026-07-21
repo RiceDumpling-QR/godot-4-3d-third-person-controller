@@ -3,187 +3,371 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="RoboBlast locomotion ablation task writeup.">
+  <meta name="description" content="RoboBlast locomotion ablation benchmark and agent evaluation.">
   <title>RoboBlast Locomotion Ablation</title>
   <style>
     :root {
       --text: #202020;
       --muted: #666;
-      --line: #ddd;
-      --paper: #fff;
-      --soft: #f6f6f4;
+      --line: #d9d9d6;
+      --soft: #f5f5f2;
+      --pass: #176b3a;
+      --partial: #91600b;
+      --fail: #a5302d;
+      --link: #195d82;
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
       color: var(--text);
-      background: var(--paper);
-      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #fff;
+      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     main {
-      width: min(960px, calc(100% - 32px));
+      width: min(1040px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 64px 0;
+      padding: 56px 0;
     }
 
-    header {
-      max-width: 720px;
-      margin-bottom: 48px;
-    }
+    header { max-width: 790px; margin-bottom: 42px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 14px; font-size: clamp(38px, 6vw, 58px); line-height: 1.04; letter-spacing: -.045em; }
+    h2 { margin-bottom: 16px; font-size: 26px; letter-spacing: -.025em; }
+    h3 { margin-bottom: 8px; font-size: 17px; }
+    p { margin-bottom: 12px; }
+    a { color: var(--link); }
+    .muted { color: var(--muted); }
 
-    .label {
-      margin: 0 0 10px;
+    .kicker {
+      margin-bottom: 9px;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: .08em;
       text-transform: uppercase;
     }
 
-    h1 {
-      margin: 0 0 18px;
-      font-size: clamp(38px, 6vw, 60px);
-      line-height: 1.04;
-      letter-spacing: -.045em;
-    }
-
-    h2 {
-      margin: 0 0 18px;
-      font-size: 26px;
-      letter-spacing: -.025em;
-    }
-
-    p { margin-top: 0; }
-    .intro { margin-bottom: 0; color: #444; font-size: 19px; }
+    .intro { color: #444; font-size: 18px; }
 
     section {
-      padding: 42px 0;
+      padding: 36px 0;
       border-top: 1px solid var(--line);
     }
 
-    .comparison {
+    .two-col {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 22px;
     }
 
-    figure { margin: 0; }
+    .task-grid {
+      display: grid;
+      grid-template-columns: .75fr 1.25fr;
+      gap: 38px;
+    }
 
-    img {
+    ul, ol { margin: 0; padding-left: 21px; }
+    li { margin-bottom: 7px; }
+
+    figure { margin: 0; }
+    figure img,
+    .visual-placeholder {
       display: block;
       width: 100%;
       aspect-ratio: 600 / 354;
-      object-fit: cover;
       border: 1px solid var(--line);
-      border-radius: 6px;
+      border-radius: 5px;
       background: var(--soft);
     }
 
-    figcaption { padding-top: 12px; }
-    figcaption strong { display: block; margin-bottom: 3px; }
-    figcaption p { margin: 0; color: var(--muted); font-size: 14px; }
+    figure img { object-fit: cover; }
 
-    .reasoning {
+    .visual-placeholder {
       display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 42px;
+      place-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
     }
 
-    .reasoning > p { color: #444; }
+    figcaption { padding-top: 10px; }
+    figcaption strong { display: block; }
+    figcaption p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
 
-    ol {
-      margin: 0;
-      padding-left: 22px;
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 5px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 11px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-weight: 650; }
+    tr:last-child td { border-bottom: 0; }
+    td.num, th.num { text-align: right; white-space: nowrap; }
+    .pass { color: var(--pass); font-weight: 650; }
+    .partial { color: var(--partial); font-weight: 650; }
+    .fail { color: var(--fail); font-weight: 650; }
+
+    .score-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
     }
 
-    li { margin-bottom: 15px; padding-left: 7px; }
-    li:last-child { margin-bottom: 0; }
-    li strong { display: block; }
-    li span { color: var(--muted); }
+    .score-line strong { font-size: 24px; letter-spacing: -.03em; }
 
-    .note {
-      margin-top: 30px;
-      padding: 18px 20px;
-      border-left: 3px solid #222;
+    .bar { height: 7px; overflow: hidden; margin: 8px 0 15px; border-radius: 9px; background: #e7e7e3; }
+    .bar span { display: block; height: 100%; background: #444; }
+
+    .baseline-note,
+    .analysis-note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-left: 3px solid #333;
       background: var(--soft);
       color: #444;
-      font-size: 14px;
-    }
-
-    footer {
-      padding-top: 24px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
       font-size: 13px;
     }
 
-    @media (max-width: 700px) {
-      main { padding: 42px 0; }
-      header { margin-bottom: 36px; }
-      .comparison, .reasoning { grid-template-columns: 1fr; }
-      .reasoning { gap: 8px; }
+    .probe-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .agent-list { display: grid; gap: 30px; }
+
+    .agent {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 24px;
+      padding-top: 26px;
+      border-top: 1px solid var(--line);
+    }
+
+    .agent:first-child { padding-top: 0; border-top: 0; }
+    .agent-copy p:last-child { margin-bottom: 0; }
+
+    .agent-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 15px 0;
+    }
+
+    .agent-summary div { padding: 12px; background: var(--soft); font-size: 13px; }
+    .agent-summary strong { display: block; margin-bottom: 3px; }
+
+    footer { padding-top: 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 760px) {
+      main { padding: 38px 0; }
+      .two-col, .task-grid, .probe-grid, .agent { grid-template-columns: 1fr; }
+      .agent-summary { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <main>
     <header>
-      <p class="label">RoboBlast · Godot 4.6</p>
-      <h1>Restoring third-person locomotion</h1>
-      <p class="intro">We removed the complete locomotion system from a working third-person shooter while leaving its camera, combat, enemies, physics, HUD, and level intact. The task asks a coding agent to reconstruct the missing player experience.</p>
+      <p class="kicker">RoboBlast · Godot 4.6 · Locomotion recovery benchmark</p>
+      <h1>Can an agent rebuild the feel of movement?</h1>
+      <p class="intro">We removed RoboBlast’s complete third-person locomotion system, asked three isolated Claude agents to restore it, and graded observable behavior with a hidden headless verifier.</p>
     </header>
 
-    <section aria-labelledby="before-after-title">
-      <h2 id="before-after-title">Before and after ablation</h2>
-      <div class="comparison">
+    <section id="task">
+      <div class="task-grid">
+        <div>
+          <p class="kicker">01 · Task</p>
+          <h2>Remove locomotion, preserve the game.</h2>
+        </div>
+        <div>
+          <p>The ablation removes camera-relative movement, acceleration, stopping, character rotation, grounded and variable-height jumping, locomotion animation, footsteps, and landing feedback. Combat, camera control, enemies, collectibles, HUD, physics, and the level remain intact.</p>
+          <p><strong>Why this feature:</strong></p>
+          <ul>
+            <li>Its loss is immediately visible to a player.</li>
+            <li>A good repair must coordinate input, camera transforms, physics, collision, animation, and audio.</li>
+            <li>Its quality can be measured from behavior without requiring a particular code structure.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="metrics">
+      <p class="kicker">02 · Verification metrics</p>
+      <h2>Ten checks, 100 points.</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metric</th><th>Observed behavior</th><th class="num">Points</th></tr></thead>
+          <tbody>
+            <tr><td>Basic movement</td><td>Four directional inputs produce sufficient, correctly aligned travel.</td><td class="num">15</td></tr>
+            <tr><td>Camera relative</td><td>Turning the camera rotates the movement direction.</td><td class="num">20</td></tr>
+            <tr><td>Diagonal normalization</td><td>Diagonal travel remains bounded relative to single-axis travel.</td><td class="num">10</td></tr>
+            <tr><td>Acceleration</td><td>Speed builds gradually and reaches the intended running range.</td><td class="num">10</td></tr>
+            <tr><td>Stopping</td><td>Velocity decreases and settles near zero after input release.</td><td class="num">10</td></tr>
+            <tr><td>Travel orientation</td><td>The visible character faces its movement direction.</td><td class="num">10</td></tr>
+            <tr><td>Grounded jump</td><td>A grounded press leaves the floor and reaches meaningful height.</td><td class="num">10</td></tr>
+            <tr><td>Midair rejection</td><td>A second press while airborne does not relaunch the player.</td><td class="num">5</td></tr>
+            <tr><td>Variable jump</td><td>Holding jump produces a higher arc than tapping.</td><td class="num">5</td></tr>
+            <tr><td>Stable landing</td><td>The player returns to its starting ground height and settles.</td><td class="num">5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="baselines">
+      <p class="kicker">03 · Original and ablated baselines</p>
+      <h2>The verifier’s upper and lower bounds.</h2>
+
+      <div class="two-col">
         <figure>
           <img src="assets/original-game.gif" alt="Original RoboBlast player moving and jumping through the level">
           <figcaption>
-            <strong>Original game</strong>
-            <p>The character moves relative to the camera, accelerates, turns, jumps, animates, and lands.</p>
+            <strong>Original · <a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/main">main</a></strong>
+            <p>The player traverses, turns, jumps, animates, and lands as expected.</p>
           </figcaption>
         </figure>
-
         <figure>
-          <img src="assets/ablated-game.gif" alt="Ablated RoboBlast player remaining stationary while the camera rotates">
+          <img src="assets/ablated-game.gif" alt="Ablated RoboBlast player remaining stationary while the camera moves">
           <figcaption>
-            <strong>Ablated game</strong>
-            <p>The world and camera still work, but WASD and jump no longer move the character.</p>
+            <strong>Ablated · <a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/task/locomotion">task/locomotion</a></strong>
+            <p>The camera and game still respond, but WASD and jump no longer produce locomotion.</p>
           </figcaption>
         </figure>
       </div>
+
+      <div class="table-wrap" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Metric</th><th class="num">Original</th><th class="num">Ablated</th><th>What the comparison shows</th></tr></thead>
+          <tbody>
+            <tr><td>Basic movement</td><td class="num pass">15/15</td><td class="num fail">0/15</td><td>The removed build cannot translate.</td></tr>
+            <tr><td>Camera relative</td><td class="num pass">20/20</td><td class="num fail">0/20</td><td>No movement exists to follow camera yaw.</td></tr>
+            <tr><td>Diagonal normalization</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>No straight or diagonal travel is produced.</td></tr>
+            <tr><td>Acceleration</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>Horizontal speed remains zero.</td></tr>
+            <tr><td>Stopping</td><td class="num pass">10/10</td><td class="num partial">5/10</td><td>Zero velocity satisfies only the final-stop half of the check.</td></tr>
+            <tr><td>Travel orientation</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>The model receives no travel direction.</td></tr>
+            <tr><td>Grounded jump</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td>The player does not launch.</td></tr>
+            <tr><td>Midair rejection</td><td class="num pass">5/5</td><td class="num pass">5/5</td><td>No jump means no illegal second jump; this is incidental safety credit.</td></tr>
+            <tr><td>Variable jump</td><td class="num pass">5/5</td><td class="num fail">0/5</td><td>Tap and hold both produce no height.</td></tr>
+            <tr><td>Stable landing</td><td class="num pass">5/5</td><td class="num partial">2/5</td><td>Height remains stable, but no valid jump-and-land cycle occurs.</td></tr>
+            <tr><th>Total</th><th class="num">100/100</th><th class="num">12/100</th><th>Correct behavior is accepted; the ablation stays runnable but scores low.</th></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <section class="reasoning" aria-labelledby="why-title">
-      <div>
-        <h2 id="why-title">Why locomotion?</h2>
-        <p>Locomotion is easy to understand as a player, but recovering it well requires more than reconnecting WASD.</p>
+    <section id="anti-cheat">
+      <p class="kicker">04 · Anti-cheat validation</p>
+      <h2>Near misses must not look perfect.</h2>
+      <div class="probe-grid">
+        <div>
+          <p>The verifier and reference implementation were hidden from agents. Every run used the same ablated commit, prompt, model setup, isolated worktree, and fresh conversation.</p>
+          <p>Five patches then introduced one plausible defect into the working game. They do not prevent copying by themselves; they demonstrate that a superficially working implementation cannot fool the behavioral grader.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Probe</th><th>Deliberate defect</th><th>Rejected by</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td>world-relative</td><td>Movement ignores camera yaw.</td><td>Camera relative</td><td class="num">80</td></tr>
+              <tr><td>fast-diagonal</td><td>Two-axis input moves too quickly.</td><td>Diagonal normalization</td><td class="num">90</td></tr>
+              <tr><td>instant-velocity</td><td>Speed snaps on and off.</td><td>Acceleration, stopping</td><td class="num">88</td></tr>
+              <tr><td>infinite-jump</td><td>Held input reapplies jump in air.</td><td>Midair rejection, landing</td><td class="num">90</td></tr>
+              <tr><td>no-rotation</td><td>The model never faces travel.</td><td>Travel orientation</td><td class="num">90</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="baseline-note"><strong>Result:</strong> all 5/5 probes lost the points associated with their intended defect.</div>
+    </section>
+
+    <section id="agents">
+      <p class="kicker">05 · Three Claude attempts</p>
+      <h2>Same task, different recovery.</h2>
+
+      <div class="agent-list">
+        <article class="agent">
+          <figure>
+            <div class="visual-placeholder" role="img" aria-label="Claude 1 gameplay GIF pending">Claude 1 gameplay GIF<br>pending</div>
+            <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-1">run/claude-1</a></strong><p>Visual will be added after capture.</p></figcaption>
+          </figure>
+          <div class="agent-copy">
+            <div class="score-line"><h3>Claude 1</h3><strong>83.5/100</strong></div>
+            <div class="bar" aria-label="Claude 1 scored 83.5 out of 100"><span style="width:83.5%"></span></div>
+            <p>Movement, camera relativity, diagonal handling, stopping, orientation, air-jump rejection, variable jump, and landing largely work.</p>
+            <div class="agent-summary">
+              <div><strong>Lost points</strong>Basic movement 7.5/15; acceleration 7/10; grounded jump 4/10.</div>
+              <div><strong>Metric evidence</strong>Only two cardinal alignments passed, speed settled at 6 instead of the intended range, and jump rise was only 0.37 units.</div>
+            </div>
+            <p class="muted"><strong>Failure classification:</strong> real agent bugs. The measurements directly violate the prompt’s directional, speed, and meaningful-jump requirements.</p>
+          </div>
+        </article>
+
+        <article class="agent">
+          <figure>
+            <div class="visual-placeholder" role="img" aria-label="Claude 2 gameplay GIF pending">Claude 2 gameplay GIF<br>pending</div>
+            <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-2">run/claude-2</a></strong><p>Visual will be added after capture.</p></figcaption>
+          </figure>
+          <div class="agent-copy">
+            <div class="score-line"><h3>Claude 2</h3><strong>16/100</strong></div>
+            <div class="bar" aria-label="Claude 2 scored 16 out of 100"><span style="width:16%"></span></div>
+            <p>The evaluated player produces zero horizontal displacement and no measurable jump arc; the result remains close to the ablated baseline.</p>
+            <div class="agent-summary">
+              <div><strong>Lost points</strong>All movement metrics failed; grounded jump received 4/10; stopping and landing received incidental partial credit.</div>
+              <div><strong>Metric evidence</strong>All four travel distances and all sampled horizontal speeds were 0. Jump rise was 0 and no landing cycle completed.</div>
+            </div>
+            <p class="muted"><strong>Failure classification:</strong> real integration failure. The implementation did not produce the observable locomotion requested by the task.</p>
+          </div>
+        </article>
+
+        <article class="agent">
+          <figure>
+            <div class="visual-placeholder" role="img" aria-label="Claude 3 gameplay GIF pending">Claude 3 gameplay GIF<br>pending</div>
+            <figcaption><strong><a href="https://github.com/RiceDumpling-QR/godot-4-3d-third-person-controller/tree/run/claude-3">run/claude-3</a></strong><p>Visual will be added after capture.</p></figcaption>
+          </figure>
+          <div class="agent-copy">
+            <div class="score-line"><h3>Claude 3</h3><strong>87.5/100</strong></div>
+            <div class="bar" aria-label="Claude 3 scored 87.5 out of 100"><span style="width:87.5%"></span></div>
+            <p>Camera-relative movement, diagonal handling, acceleration, orientation, and the complete jump arc pass. The remaining issues are cardinal alignment and incomplete stopping.</p>
+            <div class="agent-summary">
+              <div><strong>Lost points</strong>Basic movement 7.5/15; stopping 5/10.</div>
+              <div><strong>Metric evidence</strong>Only two cardinal alignments passed. Released movement slowed from 7.77 but retained 0.77 units/s instead of settling near zero.</div>
+            </div>
+            <p class="muted"><strong>Failure classification:</strong> real agent bugs. The verifier captured direction mismatch and residual drift that map directly to task requirements.</p>
+          </div>
+        </article>
       </div>
 
-      <ol>
-        <li>
-          <strong>It has clear player impact.</strong>
-          <span>The ablated game still looks complete, yet immediately feels broken. Successful recovery is visible without reading code.</span>
-        </li>
-        <li>
-          <strong>It exercises several connected systems.</strong>
-          <span>A full solution must coordinate camera-relative input, diagonal speed, acceleration, collision, jumping, facing, animation, footsteps, and landing feedback.</span>
-        </li>
-        <li>
-          <strong>It supports objective partial credit.</strong>
-          <span>A headless verifier measures movement, velocity, direction, rotation, jump trajectory, and landing state. Basic recovery can score without being mistaken for a polished solution.</span>
-        </li>
-      </ol>
+      <div class="table-wrap" style="margin-top:26px">
+        <table>
+          <thead><tr><th>Metric</th><th class="num">Claude 1</th><th class="num">Claude 2</th><th class="num">Claude 3</th></tr></thead>
+          <tbody>
+            <tr><td>Basic movement</td><td class="num partial">7.5/15</td><td class="num fail">0/15</td><td class="num partial">7.5/15</td></tr>
+            <tr><td>Camera relative</td><td class="num pass">20/20</td><td class="num fail">0/20</td><td class="num pass">20/20</td></tr>
+            <tr><td>Diagonal normalization</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td class="num pass">10/10</td></tr>
+            <tr><td>Acceleration</td><td class="num partial">7/10</td><td class="num fail">0/10</td><td class="num pass">10/10</td></tr>
+            <tr><td>Stopping</td><td class="num pass">10/10</td><td class="num partial">5/10</td><td class="num partial">5/10</td></tr>
+            <tr><td>Travel orientation</td><td class="num pass">10/10</td><td class="num fail">0/10</td><td class="num pass">10/10</td></tr>
+            <tr><td>Grounded jump</td><td class="num partial">4/10</td><td class="num partial">4/10</td><td class="num pass">10/10</td></tr>
+            <tr><td>Midair rejection</td><td class="num pass">5/5</td><td class="num pass">5/5</td><td class="num pass">5/5</td></tr>
+            <tr><td>Variable jump</td><td class="num pass">5/5</td><td class="num fail">0/5</td><td class="num pass">5/5</td></tr>
+            <tr><td>Stable landing</td><td class="num pass">5/5</td><td class="num partial">2/5</td><td class="num pass">5/5</td></tr>
+            <tr><th>Total</th><th class="num">83.5</th><th class="num">16</th><th class="num">87.5</th></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <div class="note">
-      <strong>Current scope.</strong> This draft documents the task design and behavioral difference. The three agent attempts, difficulty calibration, anti-cheat evidence, and failure analysis will be added after the runs are complete.
-    </div>
+    <section id="conclusion">
+      <p class="kicker">06 · Conclusion</p>
+      <h2>The task reached the intended partial-credit range.</h2>
+      <p>Two agents recovered most of the locomotion stack but missed measurable details; one attempt remained near the broken baseline. The spread from 16 to 87.5 shows that the task is solvable without being trivial, while the original, ablated, and probe results anchor the verifier at both extremes.</p>
+      <div class="analysis-note"><strong>Agent bug vs. verifier artifact.</strong> The reported agent failures are supported by direct displacement, speed, direction, and jump measurements. During calibration, the verifier itself was also corrected when Godot 4.6’s diagonal input behavior caused the working original to miss an initial threshold; every baseline and probe was then rerun with the final verifier.</div>
+    </section>
 
-    <footer>RoboBlast locomotion ablation study · report in progress</footer>
+    <footer>Scores are read from <code>verifier/results</code>. Claude GIF placeholders intentionally remain blank until capture.</footer>
   </main>
 </body>
 </html>
