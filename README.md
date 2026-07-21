@@ -5,17 +5,27 @@ tags: 3D third-person-shooter shooter controller
 description: "A 3D Third Person Shooter Controller Demo"
 ---
 
-# RoboBlast: Third-Person Shooter demo (Godot 4, 3D)
+# How to find the deliverables
 
-![](static/third-person-shooter-demo.webp)
+| Deliverable | Location |
+|---|---|
+| Locked original game | `main` branch |
+| Ablated task and behavioral prompt | `task/locomotion` branch; see `TASK.md` |
+| Headless verifier and exact usage instructions | `verifier/locomotion` branch; see `verifier/README.md` and `verifier/run_verifier.sh` |
+| Anti-cheat near-miss solutions | `verifier/locomotion` branch; see `verifier/probes/` |
+| Evidence that all probes were caught | `verifier/locomotion` branch; see `verifier/results/probe-results.json` |
+| Three Claude Code attempts | `run/claude-1`, `run/claude-2`, and `run/claude-3` branches |
+| Agent scores | `verifier/locomotion` branch; see `verifier/results/claude-1.json`, `claude-2.json`, and `claude-3.json` |
+| Agent diffs | Compare each `run/claude-*` branch against `task/locomotion` |
+| Agent/model/version and tool details | Add these to `report/index.html` before submission; the current run branches contain the attempted code, but not this metadata |
+| Browser-ready visual writeup | `verifier/locomotion` branch; open `report/index.html` directly—no build step is required |
 
-This open-source Godot 4 demo shows how to create a 3D character controller inspired by games like Ratchet and Clank or Jak and Daxter. You can copy the character to your project as a plug-and-play asset to prototype 3D games with and build upon.
+Run the headless verifier from the root of the `verifier/locomotion` branch:
 
-It features a character that can run, jump, make a melee attack, aim, shoot, and throw grenades.
-
-![](static/third-person-character-aiming-grenade.webp)
-
-There are two kinds of enemies: flying wasps that fire bullets and beetles that attack you on the ground. The environment comes with breakable crates, jumping pads, and coins that move to the player's character.
+```bash
+GODOT_BIN=/path/to/Godot verifier/run_verifier.sh \
+  res://verifier/results/my-run.json my-run
+```
 
 ## Evaluation branch structure
 
@@ -67,6 +77,18 @@ RiceDumpling-QR/godot-4-3d-third-person-controller
     ├── Complete ablated game
     └── Claude's third attempted locomotion implementation
 ```
+
+# RoboBlast: Third-Person Shooter demo (Godot 4, 3D)
+
+![](static/third-person-shooter-demo.webp)
+
+This open-source Godot 4 demo shows how to create a 3D character controller inspired by games like Ratchet and Clank or Jak and Daxter. You can copy the character to your project as a plug-and-play asset to prototype 3D games with and build upon.
+
+It features a character that can run, jump, make a melee attack, aim, shoot, and throw grenades.
+
+![](static/third-person-character-aiming-grenade.webp)
+
+There are two kinds of enemies: flying wasps that fire bullets and beetles that attack you on the ground. The environment comes with breakable crates, jumping pads, and coins that move to the player's character.
 
 ## How to run:
 
