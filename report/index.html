@@ -155,6 +155,12 @@
       align-items: start;
     }
 
+    .anti-subsection + .anti-subsection {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
     .agent-list { display: grid; gap: 30px; }
 
     .agent {
@@ -321,26 +327,35 @@
 
     <section id="anti-cheat">
       <p class="kicker">04 · Anti-cheat validation</p>
-      <h2>Near misses must not look perfect.</h2>
-      <div class="probe-grid">
-        <div>
-          <p>The verifier and reference implementation were hidden from agents. Every run used the same ablated commit, prompt, model setup, isolated worktree, and fresh conversation.</p>
-          <p>Five patches then introduced one plausible defect into the working game. They do not prevent copying by themselves; they demonstrate that a superficially working implementation cannot fool the behavioral grader.</p>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Probe</th><th>Deliberate defect</th><th>Rejected by</th><th class="num">Score</th></tr></thead>
-            <tbody>
-              <tr><td>world-relative</td><td>Movement ignores camera yaw.</td><td>Camera relative</td><td class="num">85</td></tr>
-              <tr><td>fast-diagonal</td><td>Two-axis input moves too quickly.</td><td>Diagonal normalization</td><td class="num">92</td></tr>
-              <tr><td>instant-velocity</td><td>Speed snaps on and off.</td><td>Acceleration, stopping</td><td class="num">86.5</td></tr>
-              <tr><td>infinite-jump</td><td>Held input reapplies jump in air.</td><td>Midair rejection, landing</td><td class="num">92</td></tr>
-              <tr><td>no-rotation</td><td>The model never faces travel.</td><td>Travel orientation</td><td class="num">92</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <h2>Hide the solution, then challenge the grader.</h2>
+
+      <div class="anti-subsection">
+        <h3>04.1 · Agent isolation</h3>
+        <p>Each agent ran in a fresh, standalone copy containing only the ablated game, <code>TASK.md</code>, and Godot MCP access. The <code>.git</code> directory was removed, preventing access to Git history, other branches, or the original locomotion implementation. Network, browser, and web-search access were disabled, so the agent could not retrieve the public upstream game or another online copy of the solution.</p>
+        <p>The verifier, grading thresholds, original code, probe patches, results, and previous attempts were excluded. Every experiment used a separate clean copy and fresh conversation; its completed changes were copied into the corresponding result branch only after the run ended.</p>
       </div>
-      <div class="baseline-note"><strong>Result:</strong> all 5/5 probes lost the points associated with their intended defect.</div>
+
+      <div class="anti-subsection">
+        <h3>04.2 · Near-miss probes</h3>
+        <div class="probe-grid">
+          <div>
+            <p>Five patches each introduced one plausible defect into a clean copy of the working original. They do not prevent copying by themselves; they demonstrate that a superficially working implementation cannot fool the behavioral grader.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Probe</th><th>Deliberate defect</th><th>Rejected by</th><th class="num">Score</th></tr></thead>
+              <tbody>
+                <tr><td>world-relative</td><td>Movement ignores camera yaw.</td><td>Camera relative</td><td class="num">85</td></tr>
+                <tr><td>fast-diagonal</td><td>Two-axis input moves too quickly.</td><td>Diagonal normalization</td><td class="num">92</td></tr>
+                <tr><td>instant-velocity</td><td>Speed snaps on and off.</td><td>Acceleration, stopping</td><td class="num">86.5</td></tr>
+                <tr><td>infinite-jump</td><td>Held input reapplies jump in air.</td><td>Midair rejection, landing</td><td class="num">92</td></tr>
+                <tr><td>no-rotation</td><td>The model never faces travel.</td><td>Travel orientation</td><td class="num">92</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="baseline-note"><strong>Result:</strong> all 5/5 probes lost the points associated with their intended defect.</div>
+      </div>
     </section>
 
     <section id="prompt">
